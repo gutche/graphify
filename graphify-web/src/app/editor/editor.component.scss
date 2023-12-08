@@ -6,8 +6,17 @@
 
 #top-bar {
     height: 10%;
+    border-bottom: 1px solid black;
 }
 
 #main {
     height: 90%;
+}
+
+.sidebar {
+    border-right: 1px solid black;
+}
+
+app-menu {
+    height: 100%;
 }

@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import {type CellStyle, Graph, InternalEvent} from '@maxgraph/core';
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { MenuComponent } from './menu/menu.component';
 
 @Component({
   selector: 'app-editor',
   standalone: true,
-  imports: [SidebarComponent],
+  imports: [SidebarComponent, MenuComponent],
   templateUrl: './editor.component.html',
   styleUrl: './editor.component.scss'
 })
