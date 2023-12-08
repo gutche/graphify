@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import {type CellStyle, Graph, InternalEvent} from '@maxgraph/core';
+import { SidebarComponent } from './sidebar/sidebar.component';
 
 @Component({
   selector: 'app-editor',
   standalone: true,
-  imports: [],
+  imports: [SidebarComponent],
   templateUrl: './editor.component.html',
   styleUrl: './editor.component.scss'
 })
@@ -25,7 +26,10 @@ export class EditorComponent {
         parent,
         position: [10, 10],
         size: [100, 100],
-        value: 'rectangle',
+        value: 'Text',
+        style: {
+          fillColor: 'yellow'
+        }
       });
       const vertex02 = graph.insertVertex({
         parent,
@@ -44,10 +48,10 @@ export class EditorComponent {
         source: vertex01,
         target: vertex02,
         value: 'edge',
-        style: {
+        /* style: {
           edgeStyle: 'orthogonalEdgeStyle',
           rounded: true,
-        },
+        }, */
       });
     });
   }
