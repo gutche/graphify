@@ -4,28 +4,23 @@ import { MenuComponent } from './menu/menu.component';
 import mx from '../../mxgraph';
 
 @Component({
-  selector: 'app-editor',
-  standalone: true,
-  imports: [SidebarComponent, MenuComponent],
-  templateUrl: './editor.component.html',
-  styleUrl: './editor.component.scss'
+    selector: 'app-editor',
+    standalone: true,
+    imports: [SidebarComponent, MenuComponent],
+    templateUrl: './editor.component.html',
+    styleUrl: './editor.component.scss',
 })
 export class EditorComponent {
+    ngOnInit() {}
 
-  ngOnInit() {}
+    ngAfterViewInit() {
+        const container = document.getElementById('graph-container');
+        const graph = new mx.mxGraph(container!);
+        graph.setPanning(true);
+        graph.setHtmlLabels(true);
+        new mx.mxRubberband(graph);
 
-  ngAfterViewInit() {
-    const container = document.getElementById('graph-container');
-    const graph = new mx.mxGraph(container!);
-    graph.setPanning(true);
-    graph.setGridEnabled(true);
-    graph.setGridSize(30);
-    graph.setHtmlLabels(true);
-    graph.zoom(8)
-    graph.zoomOut();
-    new mx.mxRubberband(graph);
-
-    const xmlDocument = mx.mxUtils.parseXml(`
+        const xmlDocument = mx.mxUtils.parseXml(`
         <mxGraphModel dx="4997" dy="2347" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
           <root>
             <mxCell id="0" />
@@ -63,17 +58,8 @@ export class EditorComponent {
             <mxCell id="12" value="&lt;div style=&quot;font-size: 26px&quot;&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Revenue Streams&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;For what value are our customers really willing to pay?&lt;/div&gt;&lt;div&gt;For what do they currently pay?&lt;/div&gt;&lt;div&gt;How are they currently paying?&lt;/div&gt;&lt;div&gt;How would they prefer to pay?&lt;/div&gt;&lt;div&gt;How much does each Revenue Stream contribute to overall revenues?&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
               <mxGeometry x="1120" y="1088" width="1050" height="330" as="geometry" />
             </mxCell>
-            <mxCell id="13" value="The Business Model Canvas&lt;br&gt;" style="text;html=1;resizable=1;points=[];autosize=1;align=left;verticalAlign=top;spacingTop=-4;fontSize=60;fontColor=#2F5B7C;movable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
+            <mxCell id="13" value="The Business Model Canvas&lt;br&gt;" style="text;html=1;resizable=1;points=[];autosize=1;align=left;verticalAlign=top;spacingTop=-4;fontSize=60;fontColor=#2F5B7C;movable=1;rotatable=1;deletable=1;fillColor=#ffffff;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
               <mxGeometry x="70" y="78" width="780" height="70" as="geometry" />
-            </mxCell>
-            <mxCell id="14" value="" style="html=1;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;verticalAlign=top;shadow=0;dashed=0;strokeWidth=4;shape=mxgraph.ios7.misc.check;strokeColor=#2F5B7C;fillColor=#ffffff;gradientColor=none;fontSize=12;fontColor=#2F5B7C;align=left;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
-              <mxGeometry x="870" y="220" width="20" height="16" as="geometry" />
-            </mxCell>
-            <mxCell id="15" value="" style="shape=mxgraph.signs.travel.present;html=1;fillColor=#2F5B7C;strokeColor=none;verticalLabelPosition=bottom;verticalAlign=top;align=center;shadow=0;labelBackgroundColor=none;fontSize=12;fontColor=#2F5B7C;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
-              <mxGeometry x="1280" y="203" width="31" height="40" as="geometry" />
-            </mxCell>
-            <mxCell id="16" value="" style="html=1;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;verticalAlign=top;strokeWidth=3;strokeColor=none;fillColor=#2F5B7C;shadow=0;dashed=0;shape=mxgraph.ios7.icons.heart;fontSize=12;fontColor=#2F5B7C;align=left;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
-              <mxGeometry x="1685.0000000000005" y="210" width="41" height="36" as="geometry" />
             </mxCell>
             <mxCell id="17" value="&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;b&gt;Dynamic pricing&lt;/b&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;Negotiation( bargaining)&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;Yield Management&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;Real-time-Market&lt;/div&gt;" style="text;html=1;resizable=1;points=[];autosize=1;align=left;verticalAlign=top;spacingTop=-4;fontSize=10;fontColor=#2F5B7C;movable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
               <mxGeometry x="1474.5" y="1254" width="120" height="50" as="geometry" />
@@ -84,31 +70,8 @@ export class EditorComponent {
             <mxCell id="19" value="&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;b&gt;Types&lt;/b&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;Asset sale&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;Usage fee&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;Subscription Fees&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;Lending/Renting/Leasing&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;Licensing&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;Brokerage fees&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;Advertising&lt;/div&gt;" style="text;html=1;resizable=1;points=[];autosize=1;align=left;verticalAlign=top;spacingTop=-4;fontSize=10;fontColor=#2F5B7C;movable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
               <mxGeometry x="1150" y="1254" width="130" height="100" as="geometry" />
             </mxCell>
-            <mxCell id="20" value="" style="shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;shape=mxgraph.mscae.cloud.data_factory;fillColor=#2F5B7C;labelBackgroundColor=none;fontSize=10;fontColor=#2F5B7C;align=left;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
-              <mxGeometry x="840" y="658" width="50" height="50" as="geometry" />
-            </mxCell>
-            <mxCell id="21" value="" style="shape=mxgraph.signs.transportation.truck_6;html=1;fillColor=#2F5B7C;strokeColor=none;verticalLabelPosition=bottom;verticalAlign=top;align=center;shadow=0;labelBackgroundColor=none;fontSize=10;fontColor=#2F5B7C;aspect=fixed;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
-              <mxGeometry x="1690" y="658" width="40" height="50" as="geometry" />
-            </mxCell>
-            <mxCell id="22" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn4.iconfinder.com/data/icons/evil-icons-user-interface/64/price-128.png;shadow=0;strokeColor=#e8edf0;strokeWidth=3;fillColor=#2F5B7C;gradientColor=none;fontSize=10;fontColor=#2F5B7C;align=left;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
-              <mxGeometry x="1054" y="1108" width="58" height="58" as="geometry" />
-            </mxCell>
-            <mxCell id="23" value="" style="dashed=0;html=1;shape=mxgraph.aws3.checklist_cost;fillColor=#2F5B7C;gradientColor=none;shadow=0;labelBackgroundColor=none;strokeColor=none;strokeWidth=3;fontSize=10;fontColor=#2F5B7C;align=left;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
-              <mxGeometry x="2076.5" y="1099.5" width="67.5" height="75" as="geometry" />
-            </mxCell>
-            <mxCell id="24" value="" style="shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#2F5B7C;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;outlineConnect=0;shape=mxgraph.office.concepts.link;labelBackgroundColor=none;fontSize=10;fontColor=#000000;align=left;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
-              <mxGeometry x="409" y="209" width="61" height="21" as="geometry" />
-            </mxCell>
-            <mxCell id="25" value="" style="group;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" connectable="0" parent="2">
-              <mxGeometry x="2076.5" y="213" width="69" height="50" as="geometry" />
-            </mxCell>
-            <mxCell id="26" value="" style="shadow=0;dashed=0;html=1;strokeColor=#FFFFFF;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;outlineConnect=0;shape=mxgraph.office.users.user;fillColor=#2F5B7C;labelBackgroundColor=none;fontSize=10;fontColor=#000000;align=left;strokeWidth=2;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="25">
-              <mxGeometry x="31" y="-5" width="46" height="50" as="geometry" />
-            </mxCell>
-            <mxCell id="27" value="" style="shadow=0;dashed=0;html=1;strokeColor=#FFFFFF;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;outlineConnect=0;shape=mxgraph.office.users.user;fillColor=#2F5B7C;labelBackgroundColor=none;fontSize=10;fontColor=#000000;align=left;strokeWidth=2;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="25">
-              <mxGeometry width="46" height="50" as="geometry" />
-            </mxCell>
-            <mxCell id="28" value="www.businessmodelgeneration.com" style="text;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
+            
+             <mxCell id="28" value="www.businessmodelgeneration.com" style="text;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
               <mxGeometry x="110" y="1448" width="360" height="26" as="geometry" />
             </mxCell>
             <mxCell id="29" value="This work is licensed under the Creative Commons Attribution-Share Alike 3.0 Unported License. &#xa;To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/ &#xa;or send a letter to Creative Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA." style="text;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
@@ -116,10 +79,40 @@ export class EditorComponent {
             </mxCell>
           </root>
         </mxGraphModel>`);
-    
-    const codec = new mx.mxCodec(xmlDocument);
-    codec.decode(xmlDocument.documentElement, graph.getModel())
 
-  }
-  
+        const codec = new mx.mxCodec(xmlDocument);
+        codec.decode(xmlDocument.documentElement, graph.getModel());
+        graph.getModel().beginUpdate();
+        const parent = graph.getDefaultParent();
+        try {
+            // Add a cell (in this case, a rectangle)
+            const vertex = graph.insertVertex(
+                parent,
+                null,
+                'New Cell',
+                400,
+                650,
+                200,
+                200
+            );
+        } finally {
+            // End the transaction
+            graph.getModel().endUpdate();
+        }
+        /* const model = codec.encode(graph.getModel());
+        const modelXml = mx.mxUtils.getXml(model);
+        const blob = new Blob([modelXml], { type: 'application/xml' });
+        const downloadLink = document.createElement('a');
+        downloadLink.href = URL.createObjectURL(blob);
+        downloadLink.download = 'example.xml';
+
+        // Append the link to the document
+        document.body.appendChild(downloadLink);
+
+        // Trigger a click on the link to start the download
+        downloadLink.click();
+
+        // Remove the link from the document
+        document.body.removeChild(downloadLink); */
+    }
 }
