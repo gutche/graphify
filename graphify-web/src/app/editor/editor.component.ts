@@ -17,6 +17,7 @@ export class EditorComponent {
         const container = document.getElementById('graph-container');
         const graph = new mx.mxGraph(container!);
         graph.setPanning(true);
+        graph.graphHandler.scaleGrid = true;
         graph.setHtmlLabels(true);
         new mx.mxRubberband(graph);
 
@@ -52,7 +53,7 @@ export class EditorComponent {
             <mxCell id="10" value="&lt;div&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Channels&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Through which Channels do our Customer Segments&lt;/div&gt;&lt;div&gt;want to be reached?&lt;/div&gt;&lt;div&gt;How are we reaching them now?&lt;/div&gt;&lt;div&gt;How are our Channels integrated?&lt;/div&gt;&lt;div&gt;Which ones work best?&lt;/div&gt;&lt;div&gt;Which ones are most cost-efficient?&lt;/div&gt;&lt;div&gt;How are we integrating them with customer routines?&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;&lt;b&gt;Channel phases&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;1. Awareness&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;&amp;nbsp; &amp;nbsp; How do we raise awareness about our company’s products and services?&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;2. Evaluation&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;&amp;nbsp; &amp;nbsp; How do we help customers evaluate our organization’s Value Proposition?&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;3. Purchase&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;&amp;nbsp; &amp;nbsp; How do we allow customers to purchase specific products and services?&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;4. Delivery&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;&amp;nbsp; &amp;nbsp; How do we deliver a Value Proposition to customers?&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;5. After sales&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;&amp;nbsp; &amp;nbsp; How do we provide post-purchase customer support?&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
               <mxGeometry x="1330" y="638" width="420" height="450" as="geometry" />
             </mxCell>
-            <mxCell id="11" value="&lt;div style=&quot;font-size: 26px&quot;&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Cost Structure&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;What are the most important costs inherent in our business model?&lt;/div&gt;&lt;div&gt;Which Key Resources are most expensive?&lt;/div&gt;&lt;div&gt;Which Key Activities are most expensive?&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;&lt;b&gt;Is your business more&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;Cost Driven (leanest cost structure, low price value proposition, maximum automation, extensive outsourcing)&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;Value Driven ( focused on value creation, premium value proposition)&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;&lt;b&gt;Sample characteristics&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;Fixed Costs (salaries, rents, utilities)&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;Variable costs&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;Economies of scale&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;Economies of scope&lt;/font&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
+            <mxCell id="11" value="&lt;div style=&quot;font-size: 26px&quot;&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Cost Structure&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;What are the most important costs inherent in our business model?&lt;/div&gt;&lt;div&gt;Which Key Resources are most expensive?&lt;/div&gt;&lt;div&gt;Which Key Activities are most expensive?&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;&lt;b&gt;Is your business more&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;Cost Driven (leanest cost structure, low price value proposition, maximum automation, extensive outsourcing)&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;Value Driven ( focused on value creation, premium value proposition)&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;&lt;b&gt;Sample characteristics&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;Fixed Costs (salaries, rents, utilities)&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;letiable costs&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;Economies of scale&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 10px&quot;&gt;&lt;font style=&quot;font-size: 10px&quot;&gt;Economies of scope&lt;/font&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
               <mxGeometry x="70" y="1088" width="1050" height="330" as="geometry" />
             </mxCell>
             <mxCell id="12" value="&lt;div style=&quot;font-size: 26px&quot;&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Revenue Streams&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;For what value are our customers really willing to pay?&lt;/div&gt;&lt;div&gt;For what do they currently pay?&lt;/div&gt;&lt;div&gt;How are they currently paying?&lt;/div&gt;&lt;div&gt;How would they prefer to pay?&lt;/div&gt;&lt;div&gt;How much does each Revenue Stream contribute to overall revenues?&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
@@ -148,5 +149,129 @@ export class EditorComponent {
 
         // Remove the link from the document
         document.body.removeChild(downloadLink); */
+
+        try
+        {
+          let canvas = document.createElement('canvas');
+          canvas.style.position = 'absolute';
+          canvas.style.top = '0px';
+          canvas.style.left = '0px';
+          canvas.style.zIndex = '-1';
+          graph.container.appendChild(canvas);
+          
+          let ctx = canvas.getContext('2d');
+          
+          // Modify event filtering to accept canvas as container
+          let mxGraphViewIsContainerEvent = mx.mxGraphView.prototype.isContainerEvent;
+          mx.mxGraphView.prototype.isContainerEvent = function(evt)
+          {
+            return mxGraphViewIsContainerEvent.apply(this, arguments) ||
+              mx.mxEvent.getSource(evt) == canvas;
+          };
+          
+          let s = 0;
+          let gs = 0;
+          let tr = new mx.mxPoint();
+          let w = 0;
+          let h = 0;
+
+          function repaintGrid()
+          {
+            if (ctx != null)
+            {
+              let bounds = graph.getGraphBounds();
+              let width = Math.max(bounds.x + bounds.width, graph.container.clientWidth);
+              let height = Math.max(bounds.y + bounds.height, graph.container.clientHeight);
+              let sizeChanged = width != w || height != h;
+              
+              if (graph.view.scale != s || graph.view.translate.x != tr.x || graph.view.translate.y != tr.y ||
+                gs != graph.gridSize || sizeChanged)
+              {
+                tr = graph.view.translate.clone();
+                s = graph.view.scale;
+                gs = graph.gridSize;
+                w = width;
+                h = height;
+                
+                // Clears the background if required
+                if (!sizeChanged)
+                {
+                  ctx.clearRect(0, 0, w, h);
+                }
+                else
+                {
+                  canvas.setAttribute('width', w.toString());
+                  canvas.setAttribute('height', h.toString());
+                }
+
+                let tx = tr.x * s;
+                let ty = tr.y * s;
+
+                // Sets the distance of the grid lines in pixels
+                let minStepping = graph.gridSize;
+                let stepping = minStepping * s;
+
+                if (stepping < minStepping)
+                {
+                  let count = Math.round(Math.ceil(minStepping / stepping) / 2) * 2;
+                  stepping = count * stepping;
+                }
+
+                let xs = Math.floor((0 - tx) / stepping) * stepping + tx;
+                let xe = Math.ceil(w / stepping) * stepping;
+                let ys = Math.floor((0 - ty) / stepping) * stepping + ty;
+                let ye = Math.ceil(h / stepping) * stepping;
+
+                xe += Math.ceil(stepping);
+                ye += Math.ceil(stepping);
+
+                let ixs = Math.round(xs);
+                let ixe = Math.round(xe);
+                let iys = Math.round(ys);
+                let iye = Math.round(ye);
+
+                // Draws the actual grid
+                ctx.strokeStyle = '#f6f6f6';
+                ctx.beginPath();
+                
+                for (let x = xs; x <= xe; x += stepping)
+                {
+                  x = Math.round((x - tx) / stepping) * stepping + tx;
+                  let ix = Math.round(x);
+                  
+                  ctx.moveTo(ix + 0.5, iys + 0.5);
+                  ctx.lineTo(ix + 0.5, iye + 0.5);
+                }
+
+                for (let y = ys; y <= ye; y += stepping)
+                {
+                  y = Math.round((y - ty) / stepping) * stepping + ty;
+                  let iy = Math.round(y);
+                  
+                  ctx.moveTo(ixs + 0.5, iy + 0.5);
+                  ctx.lineTo(ixe + 0.5, iy + 0.5);
+                }
+
+                ctx.closePath();
+                ctx.stroke();
+              }
+            }
+          };
+          let mxGraphViewValidateBackground = mx.mxGraphView.prototype.validateBackground;
+          mx.mxGraphView.prototype.validateBackground = function()
+          {
+            mxGraphViewValidateBackground.apply(this, arguments);
+            repaintGrid();
+          };
+        }
+        catch (e)
+        {
+          mx.mxLog.show();
+          mx.mxLog.debug('Using background image');
+          
+          container.style.backgroundImage = 'url(\'editors/images/grid.gif\')';
+        }
+        
+        
     }
 }
