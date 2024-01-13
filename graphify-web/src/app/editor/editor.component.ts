@@ -99,6 +99,40 @@ export class EditorComponent {
             // End the transaction
             graph.getModel().endUpdate();
         }
+
+        mx.mxEvent.addMouseWheelListener((evt, up) => {
+            if (mx.mxEvent.isConsumed(evt)) {
+                return;
+            }
+
+            let gridEnabled = graph.gridEnabled;
+
+            // disable snapping
+            graph.gridEnabled = false;
+
+            let p1 = graph.getPointForEvent(evt, false);
+
+            if (up) {
+                graph.zoomIn();
+            } else {
+                graph.zoomOut();
+            }
+
+            let p2 = graph.getPointForEvent(evt, false);
+            let deltaX = p2.x - p1.x;
+            let deltaY = p2.y - p1.y;
+            let view = graph.view;
+
+            view.setTranslate(
+                view.translate.x + deltaX,
+                view.translate.y + deltaY
+            );
+
+            graph.gridEnabled = gridEnabled;
+
+            mx.mxEvent.consume(evt);
+        }, container);
+
         /* const model = codec.encode(graph.getModel());
         const modelXml = mx.mxUtils.getXml(model);
         const blob = new Blob([modelXml], { type: 'application/xml' });
