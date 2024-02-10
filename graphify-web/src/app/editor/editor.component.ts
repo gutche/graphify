@@ -12,7 +12,6 @@ import { DownloadDataService } from '../download-data.service';
     styleUrl: './editor.component.scss',
 })
 export class EditorComponent {
-
     private graph;
     private container;
 
@@ -22,10 +21,10 @@ export class EditorComponent {
         const codec = new mx.mxCodec();
         const model = codec.encode(this.graph.getModel());
         const modelXml = mx.mxUtils.getXml(model);
-        console.log(modelXml)
+        console.log(modelXml);
         const blob = new Blob([modelXml], { type: 'application/xml' });
         this.downloadService.setBlobData(blob);
-    }
+    };
 
     initGrid = () => {
         try {
@@ -142,7 +141,7 @@ export class EditorComponent {
                         ctx.stroke();
                     }
                 }
-            }
+            };
             let mxGraphViewValidateBackground =
                 mx.mxGraphView.prototype.validateBackground;
             mx.mxGraphView.prototype.validateBackground = function () {
@@ -152,9 +151,10 @@ export class EditorComponent {
         } catch (e) {
             mx.mxLog.show();
             mx.mxLog.debug('Using background image');
-            this.container.style.backgroundImage = "url('editors/images/grid.gif')";
+            this.container.style.backgroundImage =
+                "url('editors/images/grid.gif')";
         }
-    }
+    };
 
     initZoom = () => {
         mx.mxEvent.addMouseWheelListener((evt, up) => {
@@ -189,25 +189,139 @@ export class EditorComponent {
 
             mx.mxEvent.consume(evt);
         }, this.container);
-    }
+    };
 
     ngOnInit() {
         this.downloadService.downloadButton$.subscribe(() => {
             this.updateState();
-        })
+        });
     }
+
+    
+
+    deleteCells(includeEdges)
+	{
+		// Cancels interactive operations
+		this.graph.escape();
+		var select = this.graph.deleteCells(this.graph.getDeletableCells(this.graph.getSelectionCells()), includeEdges);
+		
+		if (select != null)
+		{
+			this.graph.setSelectionCells(select);
+		}
+	};
+
+    deleteLabels()
+	{
+		if (!this.graph.isSelectionEmpty())
+		{
+			this.graph.getModel().beginUpdate();
+			try
+			{
+				var cells = this.graph.getSelectionCells();
+				
+				for (var i = 0; i < cells.length; i++)
+				{
+					this.graph.cellLabelChanged(cells[i], '');
+				}
+			}
+			finally
+			{
+				this.graph.getModel().endUpdate();
+			}
+		}
+	};
 
     ngAfterViewInit() {
         this.container = document.getElementById('graph-container');
         const sidebar = document.getElementById('sidebar');
         this.graph = new mx.mxGraph(this.container!);
-        const toolbar = new mx.mxToolbar(this.container);
 
         this.graph.setPanning(true);
         this.graph.graphHandler.scaleGrid = true;
         this.graph.setHtmlLabels(true);
         new mx.mxRubberband(this.graph);
-        new mx.mxKeyHandler(this.graph);
+        const keyHandler = new mx.mxKeyHandler(this.graph);
+
+        mx.mxGraph.prototype.isTable = function(cell)
+        {
+            var style = this.getCellStyle(cell);
+            
+            return style != null && style['childLayout'] == 'tableLayout';
+        };
+
+        mx.mxGraph.prototype.deleteCells = function(cells, includeEdges)
+		{
+			var select = null;
+
+			if (cells != null && cells.length > 0)
+			{
+				this.model.beginUpdate();
+				try
+				{
+					// Shrinks tables	
+					for (var i = 0; i < cells.length; i++)
+					{
+						var parent = this.model.getParent(cells[i]);
+						
+						if (this.isTable(parent))
+						{
+							var row = this.getCellGeometry(cells[i]);
+							var table = this.getCellGeometry(parent);
+							
+							if (row != null && table != null)
+							{
+								table = table.clone();
+								table.height -= row.height;
+								this.model.setGeometry(parent, table);
+							}
+						}
+					}
+					
+					var parents = (this.selectParentAfterDelete) ? this.model.getParents(cells) : null;
+					this.removeCells(cells, includeEdges);
+				}
+				finally
+				{
+					this.model.endUpdate();
+				}
+	
+				// Selects parents for easier editing of groups
+				if (parents != null)
+				{
+					select = [];
+					
+					for (var i = 0; i < parents.length; i++)
+					{
+						if (this.model.contains(parents[i]) &&
+							(this.model.isVertex(parents[i]) ||
+							this.model.isEdge(parents[i])))
+						{
+							select.push(parents[i]);
+						}
+					}
+				}
+			}
+			
+			return select;
+		};
+
+        keyHandler.bindKey(46, (evt, trigger) => {
+            
+            // Context menu click uses trigger, toolbar menu click uses evt
+            evt = (trigger != null) ? trigger : evt;
+
+            if (evt != null && mx.mxEvent.isShiftDown(evt))
+            {
+                this.deleteLabels();
+            }
+            else
+            {
+                this.deleteCells(evt != null && (mx.mxEvent.isControlDown(evt) ||
+                    mx.mxEvent.isMetaDown(evt) || mx.mxEvent.isAltDown(evt)));
+            }
+        });
+
         new mx.mxCellEditor(this.graph);
         this.initGrid();
         this.initZoom();
@@ -215,7 +329,6 @@ export class EditorComponent {
         // Enables guides
         mx.mxGraphHandler.prototype.guidesEnabled = true;
 
-        // Alt disables guides
         mx.mxGuide.prototype.isEnabledForEvent = function (evt) {
             return !mx.mxEvent.isAltDown(evt);
         };
@@ -288,209 +401,6 @@ export class EditorComponent {
 
         // Restores original drag icon while outside of graph
         ds.createDragElement = mx.mxDragSource.prototype.createDragElement;
-
-       /*  toolbar.setFontName = function (value) {
-            if (this.fontMenu != null) {
-                this.fontMenu.innerText = '';
-                var div = document.createElement('div');
-                div.style.display = 'inline-block';
-                div.style.overflow = 'hidden';
-                div.style.textOverflow = 'ellipsis';
-                div.style.maxWidth = '66px';
-                mx.mxUtils.write(div, value);
-                this.fontMenu.appendChild(div);
-
-                this.appendDropDownImageHtml(this.fontMenu);
-            }
-        };
-
-        toolbar.setFontSize = function (value) {
-            if (this.sizeMenu != null) {
-                this.sizeMenu.innerText = '';
-                var div = document.createElement('div');
-                div.style.display = 'inline-block';
-                div.style.overflow = 'hidden';
-                div.style.textOverflow = 'ellipsis';
-                div.style.maxWidth = '24px';
-                mx.mxUtils.write(div, value);
-                this.sizeMenu.appendChild(div);
-
-                this.appendDropDownImageHtml(this.sizeMenu);
-            }
-        };
-
-        mx.mxCellEditor.prototype.isContentEditing = function () {
-            var state = this.graph.view.getState(this.editingCell);
-
-            return state != null && state.style['html'] == 1;
-        };
-
-        this.graph.getSelectedEditingElement = function () {
-            var node = this.getSelectedElement();
-
-            while (
-                node != null &&
-                node.nodeType != mx.mxConstants.NODETYPE_ELEMENT
-            ) {
-                node = node.parentNode;
-            }
-
-            if (node != null) {
-                // Workaround for commonAncestor on range in IE11 returning parent of common ancestor
-                if (
-                    node == this.cellEditor.textarea &&
-                    this.cellEditor.textarea.children.length == 1 &&
-                    this.cellEditor.textarea.firstChild.nodeType ==
-                        mx.mxConstants.NODETYPE_ELEMENT
-                ) {
-                    node = this.cellEditor.textarea.firstChild;
-                }
-            }
-
-            return node;
-        };
-
-        this.graph.getSelectedElement = function () {
-            var node = null;
-
-            if (window.getSelection) {
-                var sel = window.getSelection();
-
-                if (sel.getRangeAt && sel.rangeCount) {
-                    var range = sel.getRangeAt(0);
-                    node = range.commonAncestorContainer;
-                }
-            } else if (this.document.selection) {
-                node = this.document.selection.createRange().parentElement();
-            }
-
-            return node;
-        };
-
-        let textMode = false;
-        let fontMenu = null;
-        let sizeMenu = null;
-        let nodes = null;
-
-        const updateToolbar = mx.mxUtils.bind(this, function () {
-            if (
-                toolbar != null &&
-                textMode != this.graph.cellEditor.isContentEditing()
-            ) {
-                var node = toolbar.container.firstChild;
-                var newNodes = [];
-
-                while (node != null) {
-                    var tmp = node.nextSibling;
-
-                    if (mx.mxUtils.indexOf(toolbar.staticElements, node) < 0) {
-                        node.parentNode.removeChild(node);
-                        newNodes.push(node);
-                    }
-
-                    node = tmp;
-                }
-
-                // Saves references to special items
-                var tmp1 = toolbar.fontMenu;
-                var tmp2 = toolbar.sizeMenu;
-
-                if (nodes == null) {
-                    toolbar.createTextToolbar();
-                } else {
-                    for (var i = 0; i < nodes.length; i++) {
-                        toolbar.container.appendChild(nodes[i]);
-                    }
-
-                    // Restores references to special items
-                    toolbar.fontMenu = fontMenu;
-                    toolbar.sizeMenu = sizeMenu;
-                }
-
-                textMode = this.graph.cellEditor.isContentEditing();
-                fontMenu = tmp1;
-                sizeMenu = tmp2;
-                nodes = newNodes;
-            }
-        });
-
-        this.graph.stripQuotes = function (text) {
-            if (text != null) {
-                if (text.charAt(0) == "'") {
-                    text = text.substring(1);
-                }
-
-                if (text.charAt(text.length - 1) == "'") {
-                    text = text.substring(0, text.length - 1);
-                }
-
-                if (text.charAt(0) == '"') {
-                    text = text.substring(1);
-                }
-
-                if (text.charAt(text.length - 1) == '"') {
-                    text = text.substring(0, text.length - 1);
-                }
-            }
-
-            return text;
-        }; */
-
-        /* const cellEditorStartEditing = graph.cellEditor.startEditing;
-        graph.cellEditor.startEditing = function () {
-            cellEditorStartEditing.apply(this, arguments);
-
-           
-
-            updateToolbar();
-            
-            var updating = false;
-            
-            var updateCssHandler = function()
-            {
-                if (!updating)
-                {
-                    updating = true;
-                
-                    window.setTimeout(function()
-                    {
-                        var node = graph.getSelectedEditingElement();
-
-                        if (node != null)
-                        {
-                            var css = mx.mxUtils.getCurrentStyle(node);
-                            if (css != null && toolbar != null)
-                            {
-                                toolbar.setFontName(graph.stripQuotes(css.fontFamily));
-                                toolbar.setFontSize(parseInt(css.fontSize));
-                            }
-                        }
-                        
-                        updating = false;
-                    }, 0);
-                }
-            };
-            
-            mx.mxEvent.addListener(graph.cellEditor.textarea, 'input', updateCssHandler)
-            mx.mxEvent.addListener(graph.cellEditor.textarea, 'touchend', updateCssHandler);
-            mx.mxEvent.addListener(graph.cellEditor.textarea, 'mouseup', updateCssHandler);
-            mx.mxEvent.addListener(graph.cellEditor.textarea, 'keyup', updateCssHandler);
-            updateCssHandler();
-        }; */
-
-        /* graph.cellEditor.isStopEditingEvent = function (evt) {
-            return (
-                graph.cellEditor.isStopEditingEvent.apply(this, arguments) ||
-                (evt.keyCode == 13 &&
-                    ((!mx.mxClient.IS_SF && mx.mxEvent.isControlDown(evt)) ||
-                        (mx.mxClient.IS_MAC && mx.mxEvent.isMetaDown(evt)) ||
-                        (mx.mxClient.IS_SF && mx.mxEvent.isShiftDown(evt))))
-            );
-        }; */
-
-        
-
-        
 
         const xmlDocument = mx.mxUtils.parseXml(`
         <mxGraphModel dx="4997" dy="2347" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
