@@ -1,8 +1,9 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { MenuComponent } from './menu/menu.component';
 import mx from '../../mxgraph';
 import { DownloadDataService } from '../download-data.service';
+import { OpenFile } from './openfile';
 
 @Component({
     selector: 'app-editor',
@@ -14,6 +15,9 @@ import { DownloadDataService } from '../download-data.service';
 export class EditorComponent {
     private graph;
     private container;
+    private dialogs;
+    private dialog;
+    private eventSource;
 
     constructor(private downloadService: DownloadDataService) {}
 
@@ -21,7 +25,6 @@ export class EditorComponent {
         const codec = new mx.mxCodec();
         const model = codec.encode(this.graph.getModel());
         const modelXml = mx.mxUtils.getXml(model);
-        console.log(modelXml);
         const blob = new Blob([modelXml], { type: 'application/xml' });
         this.downloadService.setBlobData(blob);
     };
@@ -191,48 +194,178 @@ export class EditorComponent {
         }, this.container);
     };
 
+    openFile = () => {
+        // Removes openFile if dialog is closed
+        /* this.showDialog(
+            new OpenDialog(this).container,
+            Editor.useLocalStorage ? 640 : 320,
+            Editor.useLocalStorage ? 480 : 220,
+            true,
+            true,
+            function () {
+                window.openFile = null;
+            }
+        );  */
+    };
+
+    showDialog = (
+        elt,
+        w,
+        h,
+        modal,
+        closable,
+        onClose,
+        noScroll,
+        transparent,
+        onResize,
+        ignoreBgClick
+    ) => {
+        this.graph.tooltipHandler.resetTimer();
+        this.graph.tooltipHandler.hideTooltip();
+
+        if (this.dialogs == null) {
+            this.dialogs = [];
+        }
+
+        this.dialogs = new mx.Dialog(
+            this,
+            elt,
+            w,
+            h,
+            modal,
+            closable,
+            onClose,
+            noScroll,
+            transparent,
+            onResize,
+            ignoreBgClick
+        );
+        this.dialogs.push(this.dialog);
+    };
+
+    hideDialog = (cancel, isEsc, matchContainer) => {
+        // Finds topmost non-closing dialog
+        // This closes dialogs underneath the closing dialog when hideDialog
+        // is called in the process of closing the current dialog
+        var dlg = null;
+
+        if (this.dialogs != null && this.dialogs.length > 0) {
+            for (var i = this.dialogs.length - 1; i >= 0; i--) {
+                if (!this.dialogs[i].closing) {
+                    dlg = this.dialogs[i];
+                    break;
+                }
+            }
+        }
+
+        if (dlg != null) {
+            if (
+                matchContainer != null &&
+                matchContainer != this.dialog.container.firstChild
+            ) {
+                return;
+            }
+
+            dlg.closing = true;
+
+            if (dlg.close(cancel, isEsc) == false) {
+                delete dlg.closing;
+
+                return;
+            }
+
+            // Removes dialog from stack
+            delete dlg.closing;
+
+            var index = mx.mxUtils.lastIndexOf(this.dialogs, dlg);
+
+            if (index >= 0) {
+                this.dialogs.splice(index, 1);
+            }
+
+            this.dialog =
+                this.dialogs.length > 0
+                    ? this.dialogs[this.dialogs.length - 1]
+                    : null;
+
+            // Restores existing dialogs and adds new dialogs
+            this.eventSource.fireEvent(new mx.mxEventObject('hideDialog'));
+
+            if (
+                this.dialog == null &&
+                this.graph.container != null &&
+                this.graph.container.style.visibility != 'hidden'
+            ) {
+                window.setTimeout(
+                    mx.mxUtils.bind(this, function () {
+                        if (
+                            this.editor != null &&
+                            (this.dialogs == null || this.dialogs.length == 0)
+                        ) {
+                            if (
+                                this.editor.graph.isEditing() &&
+                                this.editor.graph.cellEditor.textarea != null
+                            ) {
+                                this.editor.graph.cellEditor.textarea.focus();
+                            } else {
+                                mx.mxUtils.clearSelection();
+                                this.editor.graph.container.focus();
+                            }
+                        }
+                    }),
+                    0
+                );
+            }
+        }
+    };
+
+    async loadXMLFile(url) {
+        try {
+            const response = await fetch(url);
+            const xmlText = await response.text();
+            const parser = new DOMParser();
+            return parser.parseFromString(xmlText, 'text/xml');
+        } catch (error) {
+            console.error('Error loading XML file:', error);
+            return null;
+        }
+    }
+
     ngOnInit() {
         this.downloadService.downloadButton$.subscribe(() => {
             this.updateState();
         });
     }
 
-    
+    deleteCells(includeEdges) {
+        // Cancels interactive operations
+        this.graph.escape();
+        var select = this.graph.deleteCells(
+            this.graph.getDeletableCells(this.graph.getSelectionCells()),
+            includeEdges
+        );
 
-    deleteCells(includeEdges)
-	{
-		// Cancels interactive operations
-		this.graph.escape();
-		var select = this.graph.deleteCells(this.graph.getDeletableCells(this.graph.getSelectionCells()), includeEdges);
-		
-		if (select != null)
-		{
-			this.graph.setSelectionCells(select);
-		}
-	};
+        if (select != null) {
+            this.graph.setSelectionCells(select);
+        }
+    }
 
-    deleteLabels()
-	{
-		if (!this.graph.isSelectionEmpty())
-		{
-			this.graph.getModel().beginUpdate();
-			try
-			{
-				var cells = this.graph.getSelectionCells();
-				
-				for (var i = 0; i < cells.length; i++)
-				{
-					this.graph.cellLabelChanged(cells[i], '');
-				}
-			}
-			finally
-			{
-				this.graph.getModel().endUpdate();
-			}
-		}
-	};
+    deleteLabels() {
+        if (!this.graph.isSelectionEmpty()) {
+            this.graph.getModel().beginUpdate();
+            try {
+                var cells = this.graph.getSelectionCells();
 
-    ngAfterViewInit() {
+                for (var i = 0; i < cells.length; i++) {
+                    this.graph.cellLabelChanged(cells[i], '');
+                }
+            } finally {
+                this.graph.getModel().endUpdate();
+            }
+        }
+    }
+
+    async ngAfterViewInit() {
         this.container = document.getElementById('graph-container');
         const sidebar = document.getElementById('sidebar');
         this.graph = new mx.mxGraph(this.container!);
@@ -242,83 +375,76 @@ export class EditorComponent {
         this.graph.setHtmlLabels(true);
         new mx.mxRubberband(this.graph);
         const keyHandler = new mx.mxKeyHandler(this.graph);
+        this.eventSource = new mx.mxEventSource();
 
-        mx.mxGraph.prototype.isTable = function(cell)
-        {
+        mx.mxGraph.prototype.isTable = function (cell) {
             var style = this.getCellStyle(cell);
-            
+
             return style != null && style['childLayout'] == 'tableLayout';
         };
 
-        mx.mxGraph.prototype.deleteCells = function(cells, includeEdges)
-		{
-			var select = null;
+        mx.mxGraph.prototype.deleteCells = function (cells, includeEdges) {
+            var select = null;
 
-			if (cells != null && cells.length > 0)
-			{
-				this.model.beginUpdate();
-				try
-				{
-					// Shrinks tables	
-					for (var i = 0; i < cells.length; i++)
-					{
-						var parent = this.model.getParent(cells[i]);
-						
-						if (this.isTable(parent))
-						{
-							var row = this.getCellGeometry(cells[i]);
-							var table = this.getCellGeometry(parent);
-							
-							if (row != null && table != null)
-							{
-								table = table.clone();
-								table.height -= row.height;
-								this.model.setGeometry(parent, table);
-							}
-						}
-					}
-					
-					var parents = (this.selectParentAfterDelete) ? this.model.getParents(cells) : null;
-					this.removeCells(cells, includeEdges);
-				}
-				finally
-				{
-					this.model.endUpdate();
-				}
-	
-				// Selects parents for easier editing of groups
-				if (parents != null)
-				{
-					select = [];
-					
-					for (var i = 0; i < parents.length; i++)
-					{
-						if (this.model.contains(parents[i]) &&
-							(this.model.isVertex(parents[i]) ||
-							this.model.isEdge(parents[i])))
-						{
-							select.push(parents[i]);
-						}
-					}
-				}
-			}
-			
-			return select;
-		};
+            if (cells != null && cells.length > 0) {
+                this.model.beginUpdate();
+                try {
+                    // Shrinks tables
+                    for (var i = 0; i < cells.length; i++) {
+                        var parent = this.model.getParent(cells[i]);
+
+                        if (this.isTable(parent)) {
+                            var row = this.getCellGeometry(cells[i]);
+                            var table = this.getCellGeometry(parent);
+
+                            if (row != null && table != null) {
+                                table = table.clone();
+                                table.height -= row.height;
+                                this.model.setGeometry(parent, table);
+                            }
+                        }
+                    }
+
+                    var parents = this.selectParentAfterDelete
+                        ? this.model.getParents(cells)
+                        : null;
+                    this.removeCells(cells, includeEdges);
+                } finally {
+                    this.model.endUpdate();
+                }
+
+                // Selects parents for easier editing of groups
+                if (parents != null) {
+                    select = [];
+
+                    for (var i = 0; i < parents.length; i++) {
+                        if (
+                            this.model.contains(parents[i]) &&
+                            (this.model.isVertex(parents[i]) ||
+                                this.model.isEdge(parents[i]))
+                        ) {
+                            select.push(parents[i]);
+                        }
+                    }
+                }
+            }
+
+            return select;
+        };
 
         keyHandler.bindKey(46, (evt, trigger) => {
-            
             // Context menu click uses trigger, toolbar menu click uses evt
-            evt = (trigger != null) ? trigger : evt;
+            evt = trigger != null ? trigger : evt;
 
-            if (evt != null && mx.mxEvent.isShiftDown(evt))
-            {
+            if (evt != null && mx.mxEvent.isShiftDown(evt)) {
                 this.deleteLabels();
-            }
-            else
-            {
-                this.deleteCells(evt != null && (mx.mxEvent.isControlDown(evt) ||
-                    mx.mxEvent.isMetaDown(evt) || mx.mxEvent.isAltDown(evt)));
+            } else {
+                this.deleteCells(
+                    evt != null &&
+                        (mx.mxEvent.isControlDown(evt) ||
+                            mx.mxEvent.isMetaDown(evt) ||
+                            mx.mxEvent.isAltDown(evt))
+                );
             }
         });
 
@@ -425,7 +551,7 @@ export class EditorComponent {
             <mxCell id="7" value="&lt;div&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Key Resources" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
               <mxGeometry x="490" y="638" width="420" height="450" as="geometry" />
             </mxCell>
-            <mxCell id="8" value="&lt;div style=&quot;font-size: 26px&quot;&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Value Propositions" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
+            <mxCell id="8" value="&lt;div style=&quot;font-size: 26px&quot;&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Value Propositions" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;graph.txtdeletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
               <mxGeometry x="910" y="188" width="420" height="900" as="geometry" />
             </mxCell>
             <mxCell id="9" value="&lt;div&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Customer Segments" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
@@ -448,5 +574,7 @@ export class EditorComponent {
 
         const codec = new mx.mxCodec(xmlDocument);
         codec.decode(xmlDocument.documentElement, this.graph.getModel());
+
+        this.openFile();
     }
 }

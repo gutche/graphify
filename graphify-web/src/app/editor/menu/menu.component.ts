@@ -9,20 +9,30 @@ import { DownloadDataService } from '../../download-data.service';
     styleUrl: './menu.component.scss',
 })
 export class MenuComponent {
-    constructor(private downloadService: DownloadDataService, private elRef: ElementRef) {}
+    constructor(
+        private downloadService: DownloadDataService,
+        private elRef: ElementRef
+    ) {}
 
     ngAfterViewInit() {}
 
     download() {
-      this.downloadService.updateDownloadData();
-      const blobData = this.downloadService.getBlobData();
-      const downloadButton = this.elRef.nativeElement.querySelector('#downloadButton');
+        this.downloadService.updateDownloadData();
+        const blobData = this.downloadService.getBlobData();
+        const downloadButton =
+            this.elRef.nativeElement.querySelector('#downloadButton');
 
-    if (blobData) {
-      downloadButton.href = URL.createObjectURL(blobData);
-      downloadButton.download = 'example.xml';
+        if (blobData) {
+            downloadButton.href = URL.createObjectURL(blobData);
+            downloadButton.download = 'example.xml';
 
-      downloadButton.click();
+            downloadButton.click();
+        }
     }
-  }
+
+    load() {
+        console.log('Load');
+    }
+
+ 
 }

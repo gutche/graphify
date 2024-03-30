@@ -12,6 +12,9 @@
 .buttons {
     display: flex;
     align-items: end;
-    padding: 1rem;
-}
+    padding: 12px;
 
+    button {
+        margin-right: 5px;
+    }
+}
