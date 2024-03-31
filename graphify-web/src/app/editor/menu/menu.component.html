@@ -9,11 +9,50 @@
             id="fileInput"
             style="display: none"
         />
-        <button (click)="download()">Download</button>
-        <button (click)="load()">Load</button>
-        <a
-            id="downloadButton"
-            style="display: none"
-        ></a>
+        <button
+            class="btn"
+            type="button"
+            aria-expanded="false"
+            (click)="import()"
+        >
+            Import
+        </button>
+        <div class="dropdown">
+            <button
+                class="btn dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                id="exportButton"
+            >
+                Export
+            </button>
+            <ul class="dropdown-menu">
+                <li>
+                    <a
+                        class="dropdown-item"
+                        href="#"
+                        (click)="export('xml')"
+                        >xml</a
+                    >
+                </li>
+                <li>
+                    <a
+                        class="dropdown-item"
+                        href="#"
+                        (click)="export('jpeg')"
+                        >jpeg</a
+                    >
+                </li>
+                <li>
+                    <a
+                        class="dropdown-item"
+                        href="#"
+                        (click)="export('png')"
+                        >png</a
+                    >
+                </li>
+            </ul>
+        </div>
     </div>
 </div>

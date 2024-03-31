@@ -3,6 +3,7 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { MenuComponent } from './menu/menu.component';
 import mx from '../../mxgraph';
 import { DownloadDataService } from '../download-data.service';
+import { LoadDataService } from '../load-data.service';
 
 @Component({
     selector: 'app-editor',
@@ -15,14 +16,25 @@ export class EditorComponent {
     private graph;
     private container;
 
-    constructor(private downloadService: DownloadDataService) {}
+    constructor(
+        private downloadService: DownloadDataService,
+        private loadService: LoadDataService
+    ) {}
 
-    updateState = () => {
+    updateDownloadData = (fileType: String) => {
         const codec = new mx.mxCodec();
         const model = codec.encode(this.graph.getModel());
         const modelXml = mx.mxUtils.getXml(model);
+
         const blob = new Blob([modelXml], { type: 'application/xml' });
         this.downloadService.setBlobData(blob);
+    };
+
+    loadGraph = () => {
+        const graphData = this.loadService.getGraphData();
+        const xmlDocument = mx.mxUtils.parseXml(graphData);
+        const codec = new mx.mxCodec(xmlDocument);
+        codec.decode(xmlDocument.documentElement, this.graph.getModel());
     };
 
     initGrid = () => {
@@ -191,9 +203,10 @@ export class EditorComponent {
     };
 
     ngOnInit() {
-        this.downloadService.downloadButton$.subscribe(() => {
-            this.updateState();
+        this.downloadService.downloadButton$.subscribe((fileType) => {
+            this.updateDownloadData(fileType);
         });
+        this.loadService.loadButton$.subscribe(() => this.loadGraph());
     }
 
     deleteCells(includeEdges) {
@@ -386,7 +399,7 @@ export class EditorComponent {
         // Restores original drag icon while outside of graph
         ds.createDragElement = mx.mxDragSource.prototype.createDragElement;
 
-        const xmlDocument = mx.mxUtils.parseXml(`
+        /* const xmlDocument = mx.mxUtils.parseXml(`
         <mxGraphModel dx="4997" dy="2347" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
           <root>
             <mxCell id="0" />
@@ -431,6 +444,6 @@ export class EditorComponent {
         </mxGraphModel>`);
 
         const codec = new mx.mxCodec(xmlDocument);
-        codec.decode(xmlDocument.documentElement, this.graph.getModel());
+        codec.decode(xmlDocument.documentElement, this.graph.getModel()); */
     }
 }

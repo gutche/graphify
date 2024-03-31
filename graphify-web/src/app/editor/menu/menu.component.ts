@@ -1,5 +1,6 @@
 import { Component, ElementRef } from '@angular/core';
 import { DownloadDataService } from '../../download-data.service';
+import { LoadDataService } from '../../load-data.service';
 
 @Component({
     selector: 'app-menu',
@@ -11,10 +12,12 @@ import { DownloadDataService } from '../../download-data.service';
 export class MenuComponent {
     constructor(
         private downloadService: DownloadDataService,
+        private loadService: LoadDataService,
         private elRef: ElementRef
     ) {}
 
     ngAfterViewInit() {
+        const menuComponent = this;
         document
             .getElementById('fileInput')
             .addEventListener('change', function (event) {
@@ -23,10 +26,11 @@ export class MenuComponent {
                     const selectedFile = inputElement.files[0];
                     const reader = new FileReader();
 
-                    reader.onload = function (e) {
+                    reader.onload = (e) => {
                         // 'e.target.result' contains the file content
                         const fileContent = e.target.result;
-                        console.log(fileContent); // You can do something with the file content here
+                        menuComponent.loadService.setGraphData(fileContent);
+                        menuComponent.loadService.updateLoadData();
                     };
 
                     reader.readAsText(selectedFile);
@@ -34,21 +38,27 @@ export class MenuComponent {
             });
     }
 
-    download() {
-        this.downloadService.updateDownloadData();
+    export(fileType: string) {
+        this.downloadService.updateDownloadData(fileType);
         const blobData = this.downloadService.getBlobData();
-        const downloadButton =
-            this.elRef.nativeElement.querySelector('#downloadButton');
+        const exportButton =
+            this.elRef.nativeElement.querySelector('#exportButton');
 
         if (blobData) {
-            downloadButton.href = URL.createObjectURL(blobData);
-            downloadButton.download = 'example.xml';
+            const url = URL.createObjectURL(blobData);
+            const downloadLink = document.createElement('a');
+            downloadLink.href = url;
+            downloadLink.download = `example.${fileType}`;
 
-            downloadButton.click();
+            // Programmatically trigger the download
+            downloadLink.click();
+
+            // Clean up after download
+            URL.revokeObjectURL(url);
         }
     }
 
-    load() {
+    import() {
         document.getElementById('fileInput').click();
     }
 }

@@ -9,17 +9,17 @@ export class LoadDataService {
 
     loadButton$ = this.loadButton.asObservable();
 
-    private blobData: Blob | null = null;
+    private graphData: String | ArrayBuffer = null;
 
-    setBlobData(data: Blob) {
-        this.blobData = data;
+    setGraphData(data: String | ArrayBuffer) {
+        this.graphData = data;
     }
 
-    getBlobData(): Blob | null {
-        return this.blobData;
+    getGraphData(): String | ArrayBuffer {
+        return this.graphData;
     }
 
-    updateDownloadData() {
+    updateLoadData() {
         this.loadButton.next();
     }
 }

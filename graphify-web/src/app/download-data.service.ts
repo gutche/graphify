@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
     providedIn: 'root',
 })
 export class DownloadDataService {
-    private downloadButton = new Subject<void>();
+    private downloadButton = new Subject<String>();
 
     downloadButton$ = this.downloadButton.asObservable();
 
@@ -19,7 +19,7 @@ export class DownloadDataService {
         return this.blobData;
     }
 
-    updateDownloadData() {
-        this.downloadButton.next();
+    updateDownloadData(fileType: string) {
+        this.downloadButton.next(fileType);
     }
 }
