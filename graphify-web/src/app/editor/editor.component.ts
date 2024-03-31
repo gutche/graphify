@@ -3,7 +3,6 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { MenuComponent } from './menu/menu.component';
 import mx from '../../mxgraph';
 import { DownloadDataService } from '../download-data.service';
-import { OpenFile } from './openfile';
 
 @Component({
     selector: 'app-editor',
@@ -15,9 +14,6 @@ import { OpenFile } from './openfile';
 export class EditorComponent {
     private graph;
     private container;
-    private dialogs;
-    private dialog;
-    private eventSource;
 
     constructor(private downloadService: DownloadDataService) {}
 
@@ -194,143 +190,6 @@ export class EditorComponent {
         }, this.container);
     };
 
-    openFile = () => {
-        // Removes openFile if dialog is closed
-        /* this.showDialog(
-            new OpenDialog(this).container,
-            Editor.useLocalStorage ? 640 : 320,
-            Editor.useLocalStorage ? 480 : 220,
-            true,
-            true,
-            function () {
-                window.openFile = null;
-            }
-        );  */
-    };
-
-    showDialog = (
-        elt,
-        w,
-        h,
-        modal,
-        closable,
-        onClose,
-        noScroll,
-        transparent,
-        onResize,
-        ignoreBgClick
-    ) => {
-        this.graph.tooltipHandler.resetTimer();
-        this.graph.tooltipHandler.hideTooltip();
-
-        if (this.dialogs == null) {
-            this.dialogs = [];
-        }
-
-        this.dialogs = new mx.Dialog(
-            this,
-            elt,
-            w,
-            h,
-            modal,
-            closable,
-            onClose,
-            noScroll,
-            transparent,
-            onResize,
-            ignoreBgClick
-        );
-        this.dialogs.push(this.dialog);
-    };
-
-    hideDialog = (cancel, isEsc, matchContainer) => {
-        // Finds topmost non-closing dialog
-        // This closes dialogs underneath the closing dialog when hideDialog
-        // is called in the process of closing the current dialog
-        var dlg = null;
-
-        if (this.dialogs != null && this.dialogs.length > 0) {
-            for (var i = this.dialogs.length - 1; i >= 0; i--) {
-                if (!this.dialogs[i].closing) {
-                    dlg = this.dialogs[i];
-                    break;
-                }
-            }
-        }
-
-        if (dlg != null) {
-            if (
-                matchContainer != null &&
-                matchContainer != this.dialog.container.firstChild
-            ) {
-                return;
-            }
-
-            dlg.closing = true;
-
-            if (dlg.close(cancel, isEsc) == false) {
-                delete dlg.closing;
-
-                return;
-            }
-
-            // Removes dialog from stack
-            delete dlg.closing;
-
-            var index = mx.mxUtils.lastIndexOf(this.dialogs, dlg);
-
-            if (index >= 0) {
-                this.dialogs.splice(index, 1);
-            }
-
-            this.dialog =
-                this.dialogs.length > 0
-                    ? this.dialogs[this.dialogs.length - 1]
-                    : null;
-
-            // Restores existing dialogs and adds new dialogs
-            this.eventSource.fireEvent(new mx.mxEventObject('hideDialog'));
-
-            if (
-                this.dialog == null &&
-                this.graph.container != null &&
-                this.graph.container.style.visibility != 'hidden'
-            ) {
-                window.setTimeout(
-                    mx.mxUtils.bind(this, function () {
-                        if (
-                            this.editor != null &&
-                            (this.dialogs == null || this.dialogs.length == 0)
-                        ) {
-                            if (
-                                this.editor.graph.isEditing() &&
-                                this.editor.graph.cellEditor.textarea != null
-                            ) {
-                                this.editor.graph.cellEditor.textarea.focus();
-                            } else {
-                                mx.mxUtils.clearSelection();
-                                this.editor.graph.container.focus();
-                            }
-                        }
-                    }),
-                    0
-                );
-            }
-        }
-    };
-
-    async loadXMLFile(url) {
-        try {
-            const response = await fetch(url);
-            const xmlText = await response.text();
-            const parser = new DOMParser();
-            return parser.parseFromString(xmlText, 'text/xml');
-        } catch (error) {
-            console.error('Error loading XML file:', error);
-            return null;
-        }
-    }
-
     ngOnInit() {
         this.downloadService.downloadButton$.subscribe(() => {
             this.updateState();
@@ -375,7 +234,6 @@ export class EditorComponent {
         this.graph.setHtmlLabels(true);
         new mx.mxRubberband(this.graph);
         const keyHandler = new mx.mxKeyHandler(this.graph);
-        this.eventSource = new mx.mxEventSource();
 
         mx.mxGraph.prototype.isTable = function (cell) {
             var style = this.getCellStyle(cell);
@@ -574,7 +432,5 @@ export class EditorComponent {
 
         const codec = new mx.mxCodec(xmlDocument);
         codec.decode(xmlDocument.documentElement, this.graph.getModel());
-
-        this.openFile();
     }
 }

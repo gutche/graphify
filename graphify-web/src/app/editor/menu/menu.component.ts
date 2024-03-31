@@ -14,7 +14,25 @@ export class MenuComponent {
         private elRef: ElementRef
     ) {}
 
-    ngAfterViewInit() {}
+    ngAfterViewInit() {
+        document
+            .getElementById('fileInput')
+            .addEventListener('change', function (event) {
+                const inputElement = event.target as HTMLInputElement;
+                if (inputElement.files && inputElement.files[0]) {
+                    const selectedFile = inputElement.files[0];
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        // 'e.target.result' contains the file content
+                        const fileContent = e.target.result;
+                        console.log(fileContent); // You can do something with the file content here
+                    };
+
+                    reader.readAsText(selectedFile);
+                }
+            });
+    }
 
     download() {
         this.downloadService.updateDownloadData();
@@ -31,8 +49,6 @@ export class MenuComponent {
     }
 
     load() {
-        console.log('Load');
+        document.getElementById('fileInput').click();
     }
-
- 
 }

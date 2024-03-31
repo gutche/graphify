@@ -8,6 +8,7 @@ declare global {
         mxForceIncludes: boolean;
         mxLoadStylesheets: boolean;
         mxResourceExtension: string;
+        openFile:string;
     }
 }
 
