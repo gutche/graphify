@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { MenuComponent } from './menu/menu.component';
 import mx from '../../mxgraph';
-import { DownloadDataService } from '../download-data.service';
-import { LoadDataService } from '../load-data.service';
+import { DownloadDataService } from '../export-graph.service';
+import { LoadDataService } from '../import-graph.service';
 
 @Component({
     selector: 'app-editor',
@@ -21,7 +21,7 @@ export class EditorComponent {
         private loadService: LoadDataService
     ) {}
 
-    updateDownloadData = (fileType: String) => {
+    updateDownloadData = () => {
         const codec = new mx.mxCodec();
         const model = codec.encode(this.graph.getModel());
         const modelXml = mx.mxUtils.getXml(model);
@@ -204,7 +204,7 @@ export class EditorComponent {
 
     ngOnInit() {
         this.downloadService.downloadButton$.subscribe((fileType) => {
-            this.updateDownloadData(fileType);
+            this.updateDownloadData();
         });
         this.loadService.loadButton$.subscribe(() => this.loadGraph());
     }
