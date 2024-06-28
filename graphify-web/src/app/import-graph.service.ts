@@ -1,25 +1,25 @@
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Injectable } from "@angular/core";
+import { Subject } from "rxjs";
 
 @Injectable({
-    providedIn: 'root',
+	providedIn: "root",
 })
 export class LoadDataService {
-    private loadButton = new Subject<void>();
+	private loadButton = new Subject<void>();
 
-    loadButton$ = this.loadButton.asObservable();
+	loadButton$ = this.loadButton.asObservable();
 
-    private graphData: String | ArrayBuffer = null;
+	private graphData: String | ArrayBuffer = null;
 
-    setGraphData(data: String | ArrayBuffer) {
-        this.graphData = data;
-    }
+	setGraphData(data: String | ArrayBuffer) {
+		this.graphData = data;
+	}
 
-    getGraphData(): String | ArrayBuffer {
-        return this.graphData;
-    }
+	getGraphData(): String | ArrayBuffer {
+		return this.graphData;
+	}
 
-    updateLoadData() {
-        this.loadButton.next();
-    }
+	updateLoadData() {
+		this.loadButton.next();
+	}
 }
