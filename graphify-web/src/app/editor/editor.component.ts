@@ -241,8 +241,14 @@ export class EditorComponent {
 		this.container = document.getElementById("graph-container");
 		const sidebar = document.getElementById("sidebar");
 		this.graph = new mx.mxGraph(this.container!);
-
+		setTimeout(() => {
+			this.graph.zoomOut();
+			this.graph.zoomOut();
+			this.graph.zoomOut();
+			this.graph.zoomOut();
+		}, 100);
 		this.graph.setPanning(true);
+
 		this.graph.graphHandler.scaleGrid = true;
 		this.graph.setHtmlLabels(true);
 		new mx.mxRubberband(this.graph);
@@ -376,7 +382,7 @@ export class EditorComponent {
 			});
 		}
 
-		// Creates the element that is being for the actual preview.
+		// Creates the element for the actual preview of the object that is being dragged.
 		var dragElt = document.createElement("div");
 		dragElt.style.border = "dashed black 1px";
 		dragElt.style.width = "150px";

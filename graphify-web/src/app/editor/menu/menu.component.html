@@ -1,62 +1,65 @@
 <div class="wrapper">
-    <img
-        src="../../../assets/logo/png/logo-no-background.png"
-        alt="Graphify logo"
-        style="left: 0; padding: 10px"
-    />
-    <!-- <img
+	<img
+		src="../../../assets/logo/png/logo-no-background.png"
+		alt="Graphify logo"
+		style="left: 0; padding: 10px"
+	/>
+	<!-- <img
         src="../../../assets/graphify-favicon-color.png"
         alt="Graphify logo"
     /> -->
-    <div class="buttons">
-        <input
-            type="file"
-            id="fileInput"
-            style="display: none"
-        />
-        <button
-            class="btn"
-            type="button"
-            aria-expanded="false"
-            (click)="import()"
-        >
-            Import
-        </button>
-        <div class="dropdown">
-            <button
-                class="btn dropdown-toggle"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-            >
-                Export
-            </button>
-            <ul class="dropdown-menu">
-                <li>
-                    <a
-                        class="dropdown-item"
-                        href="#"
-                        (click)="export('xml')"
-                        >xml</a
-                    >
-                </li>
-                <li>
-                    <a
-                        class="dropdown-item"
-                        href="#"
-                        (click)="export('jpeg')"
-                        >jpeg</a
-                    >
-                </li>
-                <li>
-                    <a
-                        class="dropdown-item"
-                        href="#"
-                        (click)="export('png')"
-                        >png</a
-                    >
-                </li>
-            </ul>
-        </div>
-    </div>
+	<div class="buttons">
+		<input
+			type="file"
+			id="fileInput"
+			style="display: none"
+		/>
+		<button
+			class="btn"
+			type="button"
+			aria-expanded="false"
+			(click)="import()"
+			id="import-btn"
+		>
+			Import
+		</button>
+		<div class="dropdown">
+			<button
+				class="btn dropdown-toggle"
+				type="button"
+				data-bs-toggle="dropdown"
+				aria-expanded="false"
+				id="export-btn"
+			>
+				Export
+			</button>
+			<ul class="dropdown-menu">
+				<li>
+					<a
+						class="dropdown-item"
+						href="#"
+						(click)="export('xml')"
+						id="export-as-xml"
+						>xml</a
+					>
+				</li>
+				<li>
+					<a
+						class="dropdown-item"
+						href="#"
+						(click)="export('jpeg')"
+						>jpeg</a
+					>
+				</li>
+				<li>
+					<a
+						class="dropdown-item"
+						href="#"
+						(click)="export('png')"
+						>png</a
+					>
+				</li>
+			</ul>
+		</div>
+	</div>
 </div>
