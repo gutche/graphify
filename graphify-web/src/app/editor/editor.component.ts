@@ -239,7 +239,7 @@ export class EditorComponent {
 
 	async ngAfterViewInit() {
 		this.container = document.getElementById("graph-container");
-		const sidebar = document.getElementById("sidebar");
+		const sidebarContainer = document.getElementById("sidebar-container");
 		this.graph = new mx.mxGraph(this.container!);
 		setTimeout(() => {
 			this.graph.zoomOut();
@@ -373,7 +373,8 @@ export class EditorComponent {
 		var img = mx.mxUtils.createImage("../../assets/dragsource/post-it.png");
 		img.style.width = "100px";
 		img.style.height = "100px";
-		sidebar.appendChild(img);
+		img.style.cursor = "pointer";
+		sidebarContainer.appendChild(img);
 
 		// Disables built-in DnD in IE (this is needed for cross-frame DnD, see below)
 		if (mx.mxClient.IS_IE) {
