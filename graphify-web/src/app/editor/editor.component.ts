@@ -360,6 +360,11 @@ export class EditorComponent {
 				mx.mxConstants.STYLE_FILLCOLOR,
 				"#FFEB84"
 			);
+			style = mx.mxUtils.setStyle(
+				style,
+				mx.mxConstants.STYLE_FONTCOLOR,
+				"#000000"
+			);
 			cell.setStyle(style);
 			var cells = graph.importCells([cell], x, y, target);
 
@@ -419,7 +424,7 @@ export class EditorComponent {
             <mxCell id="0" />
             <mxCell id="1" parent="0" />
             <mxCell id="2" value="" style="group" vertex="1" connectable="0" parent="1">
-              <mxGeometry x="250" y="240" width="2250" height="1598" as="geometry" />
+              <mxGeometry x="-300" y="-550" width="2250" height="1598" as="geometry" />
             </mxCell>
             <mxCell id="3" value="" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=none;strokeWidth=3;fillColor=#e8edf0;fontSize=60;fontColor=#2F5B7C;align=left;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
               <mxGeometry width="2250" height="1598" as="geometry" />
