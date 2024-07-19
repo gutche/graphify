@@ -451,10 +451,10 @@ export class EditorComponent {
               <mxGeometry x="1330" y="638" width="420" height="450" as="geometry" />
             </mxCell>
             <mxCell id="11" value="&lt;div style=&quot;font-size: 26px&quot;&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Cost Structure" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
-              <mxGeometry x="70" y="1088" width="1050" height="330" as="geometry" />
+              <mxGeometry x="70" y="1088" width="1050" height="450" as="geometry" />
             </mxCell>
             <mxCell id="12" value="&lt;div style=&quot;font-size: 26px&quot;&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Revenue Streams" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
-              <mxGeometry x="1120" y="1088" width="1050" height="330" as="geometry" />
+              <mxGeometry x="1120" y="1088" width="1050" height="450" as="geometry" />
             </mxCell>
             <mxCell id="13" value="The Business Model Canvas" style="text;html=1;resizable=1;points=[];autosize=1;align=left;verticalAlign=top;spacingTop=-4;fontSize=60;fontColor=#2F5B7C;movable=1;rotatable=1;deletable=1;fillColor=#ffffff;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
               <mxGeometry x="70" y="78" width="780" height="70" as="geometry" />
