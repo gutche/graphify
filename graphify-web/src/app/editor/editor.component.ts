@@ -248,6 +248,7 @@ export class EditorComponent {
 			this.graph.zoomOut();
 		}, 100);
 		this.graph.setPanning(true);
+		this.graph.panningHandler.ignoreCell = true;
 
 		this.graph.graphHandler.scaleGrid = true;
 		this.graph.setHtmlLabels(true);
