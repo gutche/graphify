@@ -15,11 +15,14 @@ import { LoadDataService } from "../import-graph.service";
 export class EditorComponent {
 	private graph;
 	private container;
+	private spaceDown: boolean;
 
 	constructor(
 		private downloadService: DownloadDataService,
 		private loadService: LoadDataService
-	) {}
+	) {
+		this.spaceDown = false;
+	}
 
 	updateDownloadData = () => {
 		const codec = new mx.mxCodec();
@@ -237,6 +240,10 @@ export class EditorComponent {
 		}
 	}
 
+	isSpaceDown() {
+		return this.spaceDown;
+	}
+
 	async ngAfterViewInit() {
 		this.container = document.getElementById("graph-container");
 		const sidebarContainer = document.getElementById("sidebar-container");
@@ -248,12 +255,26 @@ export class EditorComponent {
 			this.graph.zoomOut();
 		}, 100);
 		this.graph.setPanning(true);
-		this.graph.panningHandler.ignoreCell = true;
 
 		this.graph.graphHandler.scaleGrid = true;
 		this.graph.setHtmlLabels(true);
 		new mx.mxRubberband(this.graph);
 		const keyHandler = new mx.mxKeyHandler(this.graph);
+
+		var panningHandlerIsForcePanningEvent =
+			this.graph.panningHandler.isForcePanningEvent;
+		this.graph.panningHandler.isForcePanningEvent = function (me) {
+			// Ctrl+left button is reported as right button in FF on Mac
+			return (
+				panningHandlerIsForcePanningEvent.apply(this, arguments) ||
+				(mx.mxEvent.isMouseEvent(me.getEvent()) &&
+					(this.usePopupTrigger ||
+						!mx.mxEvent.isPopupTrigger(me.getEvent())) &&
+					((!mx.mxEvent.isControlDown(me.getEvent()) &&
+						mx.mxEvent.isRightMouseButton(me.getEvent())) ||
+						mx.mxEvent.isMiddleMouseButton(me.getEvent())))
+			);
+		};
 
 		mx.mxGraph.prototype.isTable = function (cell) {
 			var style = this.getCellStyle(cell);
