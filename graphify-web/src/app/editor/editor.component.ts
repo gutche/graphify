@@ -15,14 +15,12 @@ import { LoadDataService } from "../import-graph.service";
 export class EditorComponent {
 	private graph;
 	private container;
-	private spaceDown: boolean;
+	private sidebarContainer;
 
 	constructor(
 		private downloadService: DownloadDataService,
 		private loadService: LoadDataService
-	) {
-		this.spaceDown = false;
-	}
+	) {}
 
 	updateDownloadData = () => {
 		const codec = new mx.mxCodec();
@@ -205,6 +203,136 @@ export class EditorComponent {
 		}, this.container);
 	};
 
+	preloadBMC = () => {
+		const xmlDocument = mx.mxUtils.parseXml(`
+			<mxGraphModel dx="4997" dy="2347" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
+			  <root>
+				<mxCell id="0" />
+				<mxCell id="1" parent="0" />
+				<mxCell id="2" value="" style="group" vertex="1" connectable="0" parent="1">
+				  <mxGeometry x="-300" y="-550" width="2250" height="1598" as="geometry" />
+				</mxCell>
+				<mxCell id="3" value="" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=none;strokeWidth=3;fillColor=#e8edf0;fontSize=60;fontColor=#2F5B7C;align=left;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
+				  <mxGeometry width="2250" height="1598" as="geometry" />
+				</mxCell>
+				<mxCell id="4" value="&lt;div style=&quot;font-size: 26px&quot;&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Customer Relationships" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
+				  <mxGeometry x="1330" y="188" width="420" height="450" as="geometry" />
+				</mxCell>
+				<mxCell id="5" value="&lt;font&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Key Partners" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
+				  <mxGeometry x="70" y="188" width="420" height="900" as="geometry" />
+				</mxCell>
+				<mxCell id="6" value="&lt;font&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Key Activities" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
+				  <mxGeometry x="490" y="188" width="420" height="450" as="geometry" />
+				</mxCell>
+				<mxCell id="7" value="&lt;div&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Key Resources" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
+				  <mxGeometry x="490" y="638" width="420" height="450" as="geometry" />
+				</mxCell>
+				<mxCell id="8" value="&lt;div style=&quot;font-size: 26px&quot;&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Value Propositions" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;graph.txtdeletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
+				  <mxGeometry x="910" y="188" width="420" height="900" as="geometry" />
+				</mxCell>
+				<mxCell id="9" value="&lt;div&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Customer Segments" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
+				  <mxGeometry x="1750" y="188" width="420" height="900" as="geometry" />
+				</mxCell>
+				<mxCell id="10" value="&lt;div&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Channels" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
+				  <mxGeometry x="1330" y="638" width="420" height="450" as="geometry" />
+				</mxCell>
+				<mxCell id="11" value="&lt;div style=&quot;font-size: 26px&quot;&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Cost Structure" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
+				  <mxGeometry x="70" y="1088" width="1050" height="450" as="geometry" />
+				</mxCell>
+				<mxCell id="12" value="&lt;div style=&quot;font-size: 26px&quot;&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Revenue Streams" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
+				  <mxGeometry x="1120" y="1088" width="1050" height="450" as="geometry" />
+				</mxCell>
+				<mxCell id="13" value="The Business Model Canvas" style="text;html=1;resizable=1;points=[];autosize=1;align=left;verticalAlign=top;spacingTop=-4;fontSize=60;fontColor=#2F5B7C;movable=1;rotatable=1;deletable=1;fillColor=#ffffff;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
+				  <mxGeometry x="70" y="78" width="780" height="70" as="geometry" />
+				</mxCell>
+			  </root>
+			</mxGraphModel>`);
+
+		const codec = new mx.mxCodec(xmlDocument);
+		codec.decode(xmlDocument.documentElement, this.graph.getModel());
+	};
+
+	initDraggable = () => {
+		const graphF = (evt) => {
+			var x = mx.mxEvent.getClientX(evt);
+			var y = mx.mxEvent.getClientY(evt);
+			var elt = document.elementFromPoint(x, y);
+
+			if (mx.mxUtils.isAncestorNode(this.graph.container, elt)) {
+				return this.graph;
+			}
+
+			return null;
+		};
+
+		const funct = (graph, evt, target, x, y) => {
+			var cell = new mx.mxCell("text", new mx.mxGeometry(0, 0, 150, 100));
+			cell.vertex = true;
+			var style = cell.getStyle();
+			style = mx.mxUtils.setStyle(
+				style,
+				mx.mxConstants.STYLE_FILLCOLOR,
+				"#FFEB84"
+			);
+			style = mx.mxUtils.setStyle(
+				style,
+				mx.mxConstants.STYLE_FONTCOLOR,
+				"#000000"
+			);
+			cell.setStyle(style);
+			var cells = graph.importCells([cell], x, y, target);
+
+			if (cells != null && cells.length > 0) {
+				graph.scrollCellToVisible(cells[0]);
+				graph.setSelectionCells(cells);
+			}
+		};
+
+		// Creates a DOM node that acts as the drag source
+		var img = mx.mxUtils.createImage("../../assets/dragsource/post-it.png");
+		img.style.width = "100px";
+		img.style.height = "100px";
+		img.style.cursor = "pointer";
+		this.sidebarContainer.appendChild(img);
+
+		// Disables built-in DnD in IE (this is needed for cross-frame DnD, see below)
+		if (mx.mxClient.IS_IE) {
+			mx.mxEvent.addListener(img, "dragstart", function (evt) {
+				evt.returnValue = false;
+			});
+		}
+
+		// Creates the element for the actual preview of the object that is being dragged.
+		var dragElt = document.createElement("div");
+		dragElt.style.border = "dashed black 1px";
+		dragElt.style.width = "150px";
+		dragElt.style.height = "100px";
+
+		// Drag source is configured to use dragElt for preview and as drag icon
+		// if scalePreview (last) argument is true. Dx and dy are null to force
+		// the use of the defaults. Note that dx and dy are only used for the
+		// drag icon but not for the preview.
+		var ds = mx.mxUtils.makeDraggable(
+			img,
+			graphF,
+			funct,
+			dragElt,
+			null,
+			null,
+			this.graph.autoscroll,
+			true
+		);
+
+		// Redirects feature to global switch. Note that this feature should only be used
+		// if the the x and y arguments are used in funct to insert the cell.
+		ds.isGuidesEnabled = () => {
+			return this.graph.graphHandler.guidesEnabled;
+		};
+
+		// Restores original drag icon while outside of graph
+		ds.createDragElement = mx.mxDragSource.prototype.createDragElement;
+	};
+
 	ngOnInit() {
 		this.downloadService.downloadButton$.subscribe((fileType) => {
 			this.updateDownloadData();
@@ -240,20 +368,23 @@ export class EditorComponent {
 		}
 	}
 
-	isSpaceDown() {
-		return this.spaceDown;
-	}
-
 	async ngAfterViewInit() {
+		// Get containers
 		this.container = document.getElementById("graph-container");
-		const sidebarContainer = document.getElementById("sidebar-container");
+		this.sidebarContainer = document.getElementById("sidebar-container");
+
+		// Init graph
 		this.graph = new mx.mxGraph(this.container!);
+
+		// Zoom out
 		setTimeout(() => {
 			this.graph.zoomOut();
 			this.graph.zoomOut();
 			this.graph.zoomOut();
 			this.graph.zoomOut();
 		}, 100);
+
+		// Enable panning
 		this.graph.setPanning(true);
 
 		this.graph.graphHandler.scaleGrid = true;
@@ -261,6 +392,7 @@ export class EditorComponent {
 		new mx.mxRubberband(this.graph);
 		const keyHandler = new mx.mxKeyHandler(this.graph);
 
+		// Pan with right click on top of vertices
 		var panningHandlerIsForcePanningEvent =
 			this.graph.panningHandler.isForcePanningEvent;
 		this.graph.panningHandler.isForcePanningEvent = function (me) {
@@ -350,141 +482,7 @@ export class EditorComponent {
 		new mx.mxCellEditor(this.graph);
 		this.initGrid();
 		this.initZoom();
-
-		// Enables guides
-		mx.mxGraphHandler.prototype.guidesEnabled = true;
-
-		mx.mxGuide.prototype.isEnabledForEvent = function (evt) {
-			return !mx.mxEvent.isAltDown(evt);
-		};
-
-		// Enables snapping waypoints to terminals
-		mx.mxEdgeHandler.prototype.snapToTerminals = true;
-
-		const graphF = (evt) => {
-			var x = mx.mxEvent.getClientX(evt);
-			var y = mx.mxEvent.getClientY(evt);
-			var elt = document.elementFromPoint(x, y);
-
-			if (mx.mxUtils.isAncestorNode(this.graph.container, elt)) {
-				return this.graph;
-			}
-
-			return null;
-		};
-
-		const funct = (graph, evt, target, x, y) => {
-			var cell = new mx.mxCell("text", new mx.mxGeometry(0, 0, 150, 100));
-			cell.vertex = true;
-			var style = cell.getStyle();
-			style = mx.mxUtils.setStyle(
-				style,
-				mx.mxConstants.STYLE_FILLCOLOR,
-				"#FFEB84"
-			);
-			style = mx.mxUtils.setStyle(
-				style,
-				mx.mxConstants.STYLE_FONTCOLOR,
-				"#000000"
-			);
-			cell.setStyle(style);
-			var cells = graph.importCells([cell], x, y, target);
-
-			if (cells != null && cells.length > 0) {
-				graph.scrollCellToVisible(cells[0]);
-				graph.setSelectionCells(cells);
-			}
-		};
-
-		// Creates a DOM node that acts as the drag source
-		var img = mx.mxUtils.createImage("../../assets/dragsource/post-it.png");
-		img.style.width = "100px";
-		img.style.height = "100px";
-		img.style.cursor = "pointer";
-		sidebarContainer.appendChild(img);
-
-		// Disables built-in DnD in IE (this is needed for cross-frame DnD, see below)
-		if (mx.mxClient.IS_IE) {
-			mx.mxEvent.addListener(img, "dragstart", function (evt) {
-				evt.returnValue = false;
-			});
-		}
-
-		// Creates the element for the actual preview of the object that is being dragged.
-		var dragElt = document.createElement("div");
-		dragElt.style.border = "dashed black 1px";
-		dragElt.style.width = "150px";
-		dragElt.style.height = "100px";
-
-		// Drag source is configured to use dragElt for preview and as drag icon
-		// if scalePreview (last) argument is true. Dx and dy are null to force
-		// the use of the defaults. Note that dx and dy are only used for the
-		// drag icon but not for the preview.
-		var ds = mx.mxUtils.makeDraggable(
-			img,
-			graphF,
-			funct,
-			dragElt,
-			null,
-			null,
-			this.graph.autoscroll,
-			true
-		);
-
-		// Redirects feature to global switch. Note that this feature should only be used
-		// if the the x and y arguments are used in funct to insert the cell.
-		ds.isGuidesEnabled = () => {
-			return this.graph.graphHandler.guidesEnabled;
-		};
-
-		// Restores original drag icon while outside of graph
-		ds.createDragElement = mx.mxDragSource.prototype.createDragElement;
-
-		const xmlDocument = mx.mxUtils.parseXml(`
-        <mxGraphModel dx="4997" dy="2347" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
-          <root>
-            <mxCell id="0" />
-            <mxCell id="1" parent="0" />
-            <mxCell id="2" value="" style="group" vertex="1" connectable="0" parent="1">
-              <mxGeometry x="-300" y="-550" width="2250" height="1598" as="geometry" />
-            </mxCell>
-            <mxCell id="3" value="" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=none;strokeWidth=3;fillColor=#e8edf0;fontSize=60;fontColor=#2F5B7C;align=left;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
-              <mxGeometry width="2250" height="1598" as="geometry" />
-            </mxCell>
-            <mxCell id="4" value="&lt;div style=&quot;font-size: 26px&quot;&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Customer Relationships" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
-              <mxGeometry x="1330" y="188" width="420" height="450" as="geometry" />
-            </mxCell>
-            <mxCell id="5" value="&lt;font&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Key Partners" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
-              <mxGeometry x="70" y="188" width="420" height="900" as="geometry" />
-            </mxCell>
-            <mxCell id="6" value="&lt;font&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Key Activities" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
-              <mxGeometry x="490" y="188" width="420" height="450" as="geometry" />
-            </mxCell>
-            <mxCell id="7" value="&lt;div&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Key Resources" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
-              <mxGeometry x="490" y="638" width="420" height="450" as="geometry" />
-            </mxCell>
-            <mxCell id="8" value="&lt;div style=&quot;font-size: 26px&quot;&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Value Propositions" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;graph.txtdeletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
-              <mxGeometry x="910" y="188" width="420" height="900" as="geometry" />
-            </mxCell>
-            <mxCell id="9" value="&lt;div&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Customer Segments" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
-              <mxGeometry x="1750" y="188" width="420" height="900" as="geometry" />
-            </mxCell>
-            <mxCell id="10" value="&lt;div&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Channels" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
-              <mxGeometry x="1330" y="638" width="420" height="450" as="geometry" />
-            </mxCell>
-            <mxCell id="11" value="&lt;div style=&quot;font-size: 26px&quot;&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Cost Structure" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
-              <mxGeometry x="70" y="1088" width="1050" height="450" as="geometry" />
-            </mxCell>
-            <mxCell id="12" value="&lt;div style=&quot;font-size: 26px&quot;&gt;&lt;font style=&quot;font-size: 26px&quot;&gt;Revenue Streams" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;labelBackgroundColor=none;strokeColor=#e8edf0;strokeWidth=5;fillColor=#ffffff;fontSize=12;fontColor=#2F5B7C;align=left;verticalAlign=top;spacing=30;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
-              <mxGeometry x="1120" y="1088" width="1050" height="450" as="geometry" />
-            </mxCell>
-            <mxCell id="13" value="The Business Model Canvas" style="text;html=1;resizable=1;points=[];autosize=1;align=left;verticalAlign=top;spacingTop=-4;fontSize=60;fontColor=#2F5B7C;movable=1;rotatable=1;deletable=1;fillColor=#ffffff;editable=1;locked=0;connectable=1;" vertex="1" parent="2">
-              <mxGeometry x="70" y="78" width="780" height="70" as="geometry" />
-            </mxCell>
-          </root>
-        </mxGraphModel>`);
-
-		const codec = new mx.mxCodec(xmlDocument);
-		codec.decode(xmlDocument.documentElement, this.graph.getModel());
+		this.initDraggable();
+		this.preloadBMC();
 	}
 }
