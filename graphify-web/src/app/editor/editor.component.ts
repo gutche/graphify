@@ -4,6 +4,7 @@ import { MenuComponent } from "./menu/menu.component";
 import mx from "../../mxgraph";
 import { DownloadDataService } from "../export-graph.service";
 import { LoadDataService } from "../import-graph.service";
+import DOMPurify from "dompurify";
 
 @Component({
 	selector: "app-editor",
@@ -338,6 +339,17 @@ export class EditorComponent {
 			this.updateDownloadData();
 		});
 		this.loadService.loadButton$.subscribe(() => this.loadGraph());
+		window.DOM_PURIFY_CONFIG = window.DOM_PURIFY_CONFIG || {
+			ADD_TAGS: ["use", "foreignObject"],
+			FORBID_TAGS: ["form"],
+			ALLOWED_URI_REGEXP: /^((?!javascript:).)*$/i,
+			ADD_ATTR: [
+				"target",
+				"content",
+				"pointer-events",
+				"requiredFeatures",
+			],
+		};
 	}
 
 	deleteCells(includeEdges) {
@@ -368,6 +380,17 @@ export class EditorComponent {
 		}
 	}
 
+	convertHtmlToText(label) {
+		if (label != null) {
+			var temp = document.createElement("div");
+			temp.innerHTML = this.graph.sanitizeHtml(label);
+
+			return mx.mxUtils.extractTextWithWhitespace(temp.childNodes);
+		} else {
+			return null;
+		}
+	}
+
 	async ngAfterViewInit() {
 		// Get containers
 		this.container = document.getElementById("graph-container");
@@ -376,7 +399,7 @@ export class EditorComponent {
 		// Init graph
 		this.graph = new mx.mxGraph(this.container!);
 
-		// Zoom out
+		// Zoom out at the start (We're too zoomed in xd)
 		setTimeout(() => {
 			this.graph.zoomOut();
 			this.graph.zoomOut();
@@ -387,7 +410,6 @@ export class EditorComponent {
 		// Enable panning
 		this.graph.setPanning(true);
 
-		this.graph.graphHandler.scaleGrid = true;
 		this.graph.setHtmlLabels(true);
 		new mx.mxRubberband(this.graph);
 		const keyHandler = new mx.mxKeyHandler(this.graph);
@@ -479,7 +501,57 @@ export class EditorComponent {
 			}
 		});
 
-		new mx.mxCellEditor(this.graph);
+		mx.mxGraph.prototype.isRecursiveVertexResize = function (state) {
+			return (
+				!this.isSwimlane(state.cell) &&
+				this.model.getChildCount(state.cell) > 0 &&
+				!this.isCellCollapsed(state.cell) &&
+				mx.mxUtils.getValue(state.style, "recursiveResize", "1") ==
+					"1" &&
+				mx.mxUtils.getValue(state.style, "childLayout", null) == null
+			);
+		};
+
+		/**
+		 * Enables recursive resize for groups.
+		 */
+		mx.mxVertexHandler.prototype.isRecursiveResize = function (state, me) {
+			return (
+				this.graph.isRecursiveVertexResize(state) &&
+				!mx.mxEvent.isAltDown(me.getEvent())
+			);
+		};
+
+		this.graph.domPurify = function (value, inPlace) {
+			window.DOM_PURIFY_CONFIG.IN_PLACE = inPlace;
+			return DOMPurify.sanitize(value, window.DOM_PURIFY_CONFIG);
+		};
+		/**
+		 * Sanitizes the given HTML markup, allowing target attributes and
+		 * data: protocol links to pages and custom actions.
+		 */
+		this.graph.sanitizeHtml = (value, editing) => {
+			return this.graph.domPurify(value, editing);
+		};
+
+		const mxCellEditorGetInitialValue =
+			mx.mxCellEditor.prototype.getInitialValue;
+		mx.mxCellEditor.prototype.getInitialValue = function (state, trigger) {
+			if (mx.mxUtils.getValue(state.style, "html", "0") == "0") {
+				return mxCellEditorGetInitialValue.apply(this, arguments);
+			} else {
+				var result = this.graph.getEditingValue(state.cell, trigger);
+
+				if (mx.mxUtils.getValue(state.style, "nl2Br", "1") == "1") {
+					result = result.replace(/\n/g, "<br/>");
+				}
+
+				result = this.graph.sanitizeHtml(result, true);
+
+				return result;
+			}
+		};
+
 		this.initGrid();
 		this.initZoom();
 		this.initDraggable();

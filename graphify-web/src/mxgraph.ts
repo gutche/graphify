@@ -1,24 +1,25 @@
 // src/mxgraph.ts
-import factory from 'mxgraph';
+import factory from "mxgraph";
 
 declare global {
-    interface Window {
-        mxBasePath: string;
-        mxLoadResources: boolean;
-        mxForceIncludes: boolean;
-        mxLoadStylesheets: boolean;
-        mxResourceExtension: string;
-        openFile:string;
-    }
+	interface Window {
+		mxBasePath: string;
+		mxLoadResources: boolean;
+		mxForceIncludes: boolean;
+		mxLoadStylesheets: boolean;
+		mxResourceExtension: string;
+		openFile: string;
+		DOM_PURIFY_CONFIG: any;
+	}
 }
 
-window.mxBasePath = 'assets/mxgraph';
+window.mxBasePath = "assets/mxgraph";
 window.mxLoadResources = true;
 window.mxForceIncludes = false;
 window.mxLoadStylesheets = true;
-window.mxResourceExtension = '.txt';
+window.mxResourceExtension = ".txt";
 
 export default factory.call(window, {
-    // not working see https://github.com/jgraph/mxgraph/issues/479
-    mxBasePath: 'assets/mxgraph',
+	// not working see https://github.com/jgraph/mxgraph/issues/479
+	mxBasePath: "assets/mxgraph",
 });
