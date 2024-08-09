@@ -30,6 +30,7 @@ export class MenuComponent {
 						const fileContent = e.target.result;
 						menuComponent.loadService.setGraphData(fileContent);
 						menuComponent.loadService.updateLoadData();
+						inputElement.value = "";
 					};
 
 					reader.readAsText(selectedFile);
