@@ -1,10 +1,11 @@
-import { Component } from "@angular/core";
+import { Component, ElementRef, ViewChild } from "@angular/core";
 import { SidebarComponent } from "./sidebar/sidebar.component";
 import { MenuComponent } from "./menu/menu.component";
 import mx from "../../mxgraph";
 import { DownloadDataService } from "../export-graph.service";
 import { LoadDataService } from "../import-graph.service";
 import DOMPurify from "dompurify";
+import { mxGraph } from "mxgraph";
 
 @Component({
 	selector: "app-editor",
@@ -14,16 +15,17 @@ import DOMPurify from "dompurify";
 	styleUrl: "./editor.component.scss",
 })
 export class EditorComponent {
-	private graph;
-	private container;
-	private sidebarContainer;
+	private graph: mxGraph;
+	@ViewChild("graphContainer", { static: false }) graphContainer!: ElementRef;
+	@ViewChild("sidebarComponent", { static: false })
+	sidebarComponent!: SidebarComponent;
 
 	constructor(
 		private downloadService: DownloadDataService,
 		private loadService: LoadDataService
 	) {}
 
-	updateDownloadData = () => {
+	updateDownloadData = (): void => {
 		const codec = new mx.mxCodec();
 		const model = codec.encode(this.graph.getModel());
 		const modelXml = mx.mxUtils.getXml(model);
@@ -32,26 +34,26 @@ export class EditorComponent {
 		this.downloadService.setBlobData(blob);
 	};
 
-	loadGraph = () => {
+	loadGraph = (): void => {
 		const graphData = this.loadService.getGraphData();
-		const xmlDocument = mx.mxUtils.parseXml(graphData);
+		const xmlDocument = mx.mxUtils.parseXml(graphData.toString());
 		const codec = new mx.mxCodec(xmlDocument);
 		codec.decode(xmlDocument.documentElement, this.graph.getModel());
 	};
 
-	initGrid = () => {
+	initGrid = (): void => {
 		try {
-			let canvas = document.createElement("canvas");
+			const canvas = document.createElement("canvas");
 			canvas.style.position = "absolute";
 			canvas.style.top = "0px";
 			canvas.style.left = "0px";
 			canvas.style.zIndex = "-1";
 			this.graph.container.appendChild(canvas);
 
-			let ctx = canvas.getContext("2d");
+			const ctx = canvas.getContext("2d");
 
 			// Modify event filtering to accept canvas as container
-			let mxGraphViewIsContainerEvent =
+			const mxGraphViewIsContainerEvent =
 				mx.mxGraphView.prototype.isContainerEvent;
 			mx.mxGraphView.prototype.isContainerEvent = function (evt) {
 				return (
@@ -68,16 +70,16 @@ export class EditorComponent {
 
 			const repaintGrid = () => {
 				if (ctx != null) {
-					let bounds = this.graph.getGraphBounds();
-					let width = Math.max(
+					const bounds = this.graph.getGraphBounds();
+					const width = Math.max(
 						bounds.x + bounds.width,
 						this.graph.container.clientWidth
 					);
-					let height = Math.max(
+					const height = Math.max(
 						bounds.y + bounds.height,
 						this.graph.container.clientHeight
 					);
-					let sizeChanged = width != w || height != h;
+					const sizeChanged = width != w || height != h;
 
 					if (
 						this.graph.view.scale != s ||
@@ -100,35 +102,35 @@ export class EditorComponent {
 							canvas.setAttribute("height", h.toString());
 						}
 
-						let tx = tr.x * s;
-						let ty = tr.y * s;
+						const tx = tr.x * s;
+						const ty = tr.y * s;
 
 						// Sets the distance of the grid lines in pixels
-						let minStepping = this.graph.gridSize;
+						const minStepping = this.graph.gridSize;
 						let stepping = minStepping * s;
 
 						if (stepping < minStepping) {
-							let count =
+							const count =
 								Math.round(
 									Math.ceil(minStepping / stepping) / 2
 								) * 2;
 							stepping = count * stepping;
 						}
 
-						let xs =
+						const xs =
 							Math.floor((0 - tx) / stepping) * stepping + tx;
 						let xe = Math.ceil(w / stepping) * stepping;
-						let ys =
+						const ys =
 							Math.floor((0 - ty) / stepping) * stepping + ty;
 						let ye = Math.ceil(h / stepping) * stepping;
 
 						xe += Math.ceil(stepping);
 						ye += Math.ceil(stepping);
 
-						let ixs = Math.round(xs);
-						let ixe = Math.round(xe);
-						let iys = Math.round(ys);
-						let iye = Math.round(ye);
+						const ixs = Math.round(xs);
+						const ixe = Math.round(xe);
+						const iys = Math.round(ys);
+						const iye = Math.round(ye);
 
 						// Draws the actual grid
 						ctx.strokeStyle = "#f6f6f6";
@@ -136,7 +138,7 @@ export class EditorComponent {
 
 						for (let x = xs; x <= xe; x += stepping) {
 							x = Math.round((x - tx) / stepping) * stepping + tx;
-							let ix = Math.round(x);
+							const ix = Math.round(x);
 
 							ctx.moveTo(ix + 0.5, iys + 0.5);
 							ctx.lineTo(ix + 0.5, iye + 0.5);
@@ -144,7 +146,7 @@ export class EditorComponent {
 
 						for (let y = ys; y <= ye; y += stepping) {
 							y = Math.round((y - ty) / stepping) * stepping + ty;
-							let iy = Math.round(y);
+							const iy = Math.round(y);
 
 							ctx.moveTo(ixs + 0.5, iy + 0.5);
 							ctx.lineTo(ixe + 0.5, iy + 0.5);
@@ -155,7 +157,7 @@ export class EditorComponent {
 					}
 				}
 			};
-			let mxGraphViewValidateBackground =
+			const mxGraphViewValidateBackground =
 				mx.mxGraphView.prototype.validateBackground;
 			mx.mxGraphView.prototype.validateBackground = function () {
 				mxGraphViewValidateBackground.apply(this, arguments);
@@ -164,23 +166,23 @@ export class EditorComponent {
 		} catch (e) {
 			mx.mxLog.show();
 			mx.mxLog.debug("Using background image");
-			this.container.style.backgroundImage =
+			this.graphContainer.nativeElement.style.backgroundImage =
 				"url('editors/images/grid.gif')";
 		}
 	};
 
-	initZoom = () => {
+	initZoom = (): void => {
 		mx.mxEvent.addMouseWheelListener((evt, up) => {
 			if (mx.mxEvent.isConsumed(evt)) {
 				return;
 			}
 
-			let gridEnabled = this.graph.gridEnabled;
+			const gridEnabled = this.graph.gridEnabled;
 
 			// disable snapping
 			this.graph.gridEnabled = false;
 
-			let p1 = this.graph.getPointForEvent(evt, false);
+			const p1 = this.graph.getPointForEvent(evt, false);
 
 			if (up) {
 				this.graph.zoomIn();
@@ -188,10 +190,10 @@ export class EditorComponent {
 				this.graph.zoomOut();
 			}
 
-			let p2 = this.graph.getPointForEvent(evt, false);
-			let deltaX = p2.x - p1.x;
-			let deltaY = p2.y - p1.y;
-			let view = this.graph.view;
+			const p2 = this.graph.getPointForEvent(evt, false);
+			const deltaX = p2.x - p1.x;
+			const deltaY = p2.y - p1.y;
+			const view = this.graph.view;
 
 			view.setTranslate(
 				view.translate.x + deltaX,
@@ -201,10 +203,10 @@ export class EditorComponent {
 			this.graph.gridEnabled = gridEnabled;
 
 			mx.mxEvent.consume(evt);
-		}, this.container);
+		}, this.graphContainer.nativeElement);
 	};
 
-	preloadBMC = () => {
+	preloadBMC = (): void => {
 		const xmlDocument = mx.mxUtils.parseXml(`
 			<mxGraphModel dx="4997" dy="2347" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
 			  <root>
@@ -253,11 +255,11 @@ export class EditorComponent {
 		codec.decode(xmlDocument.documentElement, this.graph.getModel());
 	};
 
-	initDraggable = () => {
+	initDraggable = (): void => {
 		const graphF = (evt) => {
-			var x = mx.mxEvent.getClientX(evt);
-			var y = mx.mxEvent.getClientY(evt);
-			var elt = document.elementFromPoint(x, y);
+			const x = mx.mxEvent.getClientX(evt);
+			const y = mx.mxEvent.getClientY(evt);
+			const elt = document.elementFromPoint(x, y);
 
 			if (mx.mxUtils.isAncestorNode(this.graph.container, elt)) {
 				return this.graph;
@@ -267,9 +269,9 @@ export class EditorComponent {
 		};
 
 		const funct = (graph, evt, target, x, y) => {
-			var cell = new mx.mxCell("text", new mx.mxGeometry(0, 0, 150, 100));
+			const cell = new mx.mxCell("text", new mx.mxGeometry(0, 0, 150, 100));
 			cell.vertex = true;
-			var style = cell.getStyle();
+			let style = cell.getStyle();
 			style = mx.mxUtils.setStyle(
 				style,
 				mx.mxConstants.STYLE_FILLCOLOR,
@@ -281,7 +283,7 @@ export class EditorComponent {
 				"#000000"
 			);
 			cell.setStyle(style);
-			var cells = graph.importCells([cell], x, y, target);
+			const cells = graph.importCells([cell], x, y, target);
 
 			if (cells != null && cells.length > 0) {
 				graph.scrollCellToVisible(cells[0]);
@@ -290,11 +292,12 @@ export class EditorComponent {
 		};
 
 		// Creates a DOM node that acts as the drag source
-		var img = mx.mxUtils.createImage("../../assets/dragsource/post-it.png");
+		const img = mx.mxUtils.createImage("../../assets/dragsource/post-it.png");
 		img.style.width = "100px";
 		img.style.height = "100px";
 		img.style.cursor = "pointer";
-		this.sidebarContainer.appendChild(img);
+
+		this.sidebarComponent.appendChild(img);
 
 		// Disables built-in DnD in IE (this is needed for cross-frame DnD, see below)
 		if (mx.mxClient.IS_IE) {
@@ -304,7 +307,7 @@ export class EditorComponent {
 		}
 
 		// Creates the element for the actual preview of the object that is being dragged.
-		var dragElt = document.createElement("div");
+		const dragElt = document.createElement("div");
 		dragElt.style.border = "dashed black 1px";
 		dragElt.style.width = "150px";
 		dragElt.style.height = "100px";
@@ -313,14 +316,14 @@ export class EditorComponent {
 		// if scalePreview (last) argument is true. Dx and dy are null to force
 		// the use of the defaults. Note that dx and dy are only used for the
 		// drag icon but not for the preview.
-		var ds = mx.mxUtils.makeDraggable(
+		const ds = mx.mxUtils.makeDraggable(
 			img,
 			graphF,
 			funct,
 			dragElt,
 			null,
 			null,
-			this.graph.autoscroll,
+			this.graph.autoScroll,
 			true
 		);
 
@@ -334,7 +337,7 @@ export class EditorComponent {
 		ds.createDragElement = mx.mxDragSource.prototype.createDragElement;
 	};
 
-	ngOnInit() {
+	ngOnInit(): void {
 		this.downloadService.downloadButton$.subscribe((fileType) => {
 			this.updateDownloadData();
 		});
@@ -352,7 +355,7 @@ export class EditorComponent {
 		};
 	}
 
-	deleteCells(includeEdges) {
+	deleteCells(includeEdges): void {
 		// Cancels interactive operations
 		this.graph.escape();
 		var select = this.graph.deleteCells(
@@ -365,7 +368,7 @@ export class EditorComponent {
 		}
 	}
 
-	deleteLabels() {
+	deleteLabels(): void {
 		if (!this.graph.isSelectionEmpty()) {
 			this.graph.getModel().beginUpdate();
 			try {
@@ -380,10 +383,13 @@ export class EditorComponent {
 		}
 	}
 
-	convertHtmlToText(label) {
+	convertHtmlToText(label): string {
 		if (label != null) {
 			var temp = document.createElement("div");
-			temp.innerHTML = this.graph.sanitizeHtml(label);
+			temp.innerHTML = this.graph.sanitizeHtml(
+				label,
+				this.graph.isEditing()
+			);
 
 			return mx.mxUtils.extractTextWithWhitespace(temp.childNodes);
 		} else {
@@ -391,14 +397,9 @@ export class EditorComponent {
 		}
 	}
 
-	async ngAfterViewInit() {
-		// Get containers
-		this.container = document.getElementById("graph-container");
-		this.sidebarContainer = document.getElementById("sidebar-container");
-
+	async ngAfterViewInit(): Promise<void> {
 		// Init graph
-		this.graph = new mx.mxGraph(this.container!);
-
+		this.graph = new mx.mxGraph(this.graphContainer.nativeElement!);
 		// Zoom out at the start (We're too zoomed in xd)
 		setTimeout(() => {
 			this.graph.zoomOut();
@@ -485,7 +486,7 @@ export class EditorComponent {
 			return select;
 		};
 
-		keyHandler.bindKey(46, (evt, trigger) => {
+		keyHandler.bindKey(46, (evt, trigger): void => {
 			// Context menu click uses trigger, toolbar menu click uses evt
 			evt = trigger != null ? trigger : evt;
 
@@ -501,7 +502,9 @@ export class EditorComponent {
 			}
 		});
 
-		mx.mxGraph.prototype.isRecursiveVertexResize = function (state) {
+		mx.mxGraph.prototype.isRecursiveVertexResize = function (
+			state
+		): boolean {
 			return (
 				!this.isSwimlane(state.cell) &&
 				this.model.getChildCount(state.cell) > 0 &&
@@ -515,7 +518,10 @@ export class EditorComponent {
 		/**
 		 * Enables recursive resize for groups.
 		 */
-		mx.mxVertexHandler.prototype.isRecursiveResize = function (state, me) {
+		mx.mxVertexHandler.prototype.isRecursiveResize = function (
+			state,
+			me
+		): boolean {
 			return (
 				this.graph.isRecursiveVertexResize(state) &&
 				!mx.mxEvent.isAltDown(me.getEvent())

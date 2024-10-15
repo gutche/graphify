@@ -20,7 +20,8 @@
 		"module": "ES2022",
 		"useDefineForClassFields": false,
 		"lib": ["ES2022", "dom"],
-		"typeRoots": ["node_modules/@typed-mxgraph", "node_modules/@types"]
+		"typeRoots": ["node_modules/@typed-mxgraph", "node_modules/@types"],
+		"skipLibCheck": true
 	},
 	"angularCompilerOptions": {
 		"enableI18nLegacyMessageIdFormat": false,
