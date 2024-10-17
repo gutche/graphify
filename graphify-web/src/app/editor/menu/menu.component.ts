@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, ElementRef, ViewChild } from "@angular/core";
 import { DownloadDataService } from "../../export-graph.service";
 import { LoadDataService } from "../../import-graph.service";
 
@@ -10,52 +10,56 @@ import { LoadDataService } from "../../import-graph.service";
 	styleUrl: "./menu.component.scss",
 })
 export class MenuComponent {
+	@ViewChild("fileInput") fileInput!: ElementRef<HTMLInputElement>;
+
 	constructor(
 		private downloadService: DownloadDataService,
 		private loadService: LoadDataService
 	) {}
 
-	ngAfterViewInit() {
-		const menuComponent = this;
-		document
-			.getElementById("fileInput")
-			.addEventListener("change", function (event) {
-				const inputElement = event.target as HTMLInputElement;
+	ngAfterViewInit(): void {
+		this.fileInput.nativeElement.addEventListener(
+			"change",
+			(event): void => {
+				const inputElement: HTMLInputElement =
+					event.target as HTMLInputElement;
 				if (inputElement.files && inputElement.files[0]) {
-					const selectedFile = inputElement.files[0];
-					const reader = new FileReader();
+					const selectedFile: File = inputElement.files[0];
+					const reader: FileReader = new FileReader();
 
 					reader.onload = (e) => {
-						// 'e.target.result' contains the file content
-						const fileContent = e.target.result;
-						menuComponent.loadService.setGraphData(fileContent);
-						menuComponent.loadService.updateLoadData();
-						inputElement.value = "";
+						const fileContent: string | ArrayBuffer =
+							e.target?.result;
+						this.loadService.setGraphData(fileContent as string);
+						this.loadService.updateLoadData();
+						inputElement.value = ""; // Clear the input after loading the file
 					};
 
 					reader.readAsText(selectedFile);
 				}
-			});
+			}
+		);
 	}
 
-	export(fileType: string) {
-		let blobData = null;
-		let url = null;
+	export(fileType: string): void {
+		let blobData: Blob | null = null;
+		let url: string | null = null;
 
 		if (fileType === "xml") {
 			this.downloadService.updateDownloadData();
 			blobData = this.downloadService.getBlobData();
 		} else {
-			const container = document.getElementById("graph-container");
-			const svgElement = container.querySelector("svg");
-			const svgContent = new XMLSerializer().serializeToString(
+			const container: HTMLElement =
+				document.getElementById("graph-container");
+			const svgElement: SVGSVGElement = container.querySelector("svg");
+			const svgContent: string = new XMLSerializer().serializeToString(
 				svgElement
 			);
 
-			const canvas = document.createElement("canvas");
-			const context = canvas.getContext("2d");
+			const canvas: HTMLCanvasElement = document.createElement("canvas");
+			const context: CanvasRenderingContext2D = canvas.getContext("2d");
 
-			const image = new Image();
+			const image: HTMLImageElement = new Image();
 			image.onload = () => {
 				canvas.width = svgElement.clientWidth;
 				canvas.height = svgElement.clientHeight;
@@ -75,15 +79,15 @@ export class MenuComponent {
 		}
 	}
 
-	private triggerDownload(url: string, fileType: string) {
-		const exportLink = document.createElement("a");
+	private triggerDownload(url: string, fileType: string): void {
+		const exportLink: HTMLAnchorElement = document.createElement("a");
 		exportLink.href = url;
 		exportLink.download = `example.${fileType}`;
 		exportLink.click();
 		URL.revokeObjectURL(url);
 	}
 
-	import() {
-		document.getElementById("fileInput").click();
+	import(): void {
+		this.fileInput.nativeElement.click();
 	}
 }

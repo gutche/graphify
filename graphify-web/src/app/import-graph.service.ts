@@ -1,17 +1,17 @@
 import { Injectable } from "@angular/core";
-import { Subject } from "rxjs";
+import { Observable, Subject } from "rxjs";
 
 @Injectable({
 	providedIn: "root",
 })
 export class LoadDataService {
-	private loadButton = new Subject<void>();
+	private loadButton: Subject<void> = new Subject<void>();
 
-	loadButton$ = this.loadButton.asObservable();
+	loadButton$: Observable<void> = this.loadButton.asObservable();
 
 	private graphData: String | ArrayBuffer = null;
 
-	setGraphData(data: String | ArrayBuffer) {
+	setGraphData(data: String | ArrayBuffer): void {
 		this.graphData = data;
 	}
 
@@ -19,7 +19,7 @@ export class LoadDataService {
 		return this.graphData;
 	}
 
-	updateLoadData() {
+	updateLoadData(): void {
 		this.loadButton.next();
 	}
 }

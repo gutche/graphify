@@ -5,7 +5,7 @@ import mx from "../../mxgraph";
 import { DownloadDataService } from "../export-graph.service";
 import { LoadDataService } from "../import-graph.service";
 import DOMPurify from "dompurify";
-import { mxGraph } from "mxgraph";
+import { mxCell, mxCodec, mxGraph, mxGraphView } from "mxgraph";
 
 @Component({
 	selector: "app-editor",
@@ -26,18 +26,18 @@ export class EditorComponent {
 	) {}
 
 	updateDownloadData = (): void => {
-		const codec = new mx.mxCodec();
-		const model = codec.encode(this.graph.getModel());
-		const modelXml = mx.mxUtils.getXml(model);
+		const codec: mxCodec = new mx.mxCodec();
+		const model: XMLDocument = codec.encode(this.graph.getModel());
+		const modelXml: string = mx.mxUtils.getXml(model);
 
-		const blob = new Blob([modelXml], { type: "application/xml" });
+		const blob: Blob = new Blob([modelXml], { type: "application/xml" });
 		this.downloadService.setBlobData(blob);
 	};
 
 	loadGraph = (): void => {
-		const graphData = this.loadService.getGraphData();
-		const xmlDocument = mx.mxUtils.parseXml(graphData.toString());
-		const codec = new mx.mxCodec(xmlDocument);
+		const graphData: String | ArrayBuffer = this.loadService.getGraphData();
+		const xmlDocument = mx.mxUtils.parseXml(graphData);
+		const codec: mxCodec = new mx.mxCodec(xmlDocument);
 		codec.decode(xmlDocument.documentElement, this.graph.getModel());
 	};
 
@@ -51,13 +51,14 @@ export class EditorComponent {
 			this.graph.container.appendChild(canvas);
 
 			const ctx = canvas.getContext("2d");
+			const mxGraphView: mxGraphView = mx.mxGraphView.prototype;
+
+			const isContainerEventRef: Function = mxGraphView.isContainerEvent;
 
 			// Modify event filtering to accept canvas as container
-			const mxGraphViewIsContainerEvent =
-				mx.mxGraphView.prototype.isContainerEvent;
-			mx.mxGraphView.prototype.isContainerEvent = function (evt) {
+			mxGraphView.isContainerEvent = function (evt) {
 				return (
-					mxGraphViewIsContainerEvent.apply(this, arguments) ||
+					isContainerEventRef.apply(this, arguments) ||
 					mx.mxEvent.getSource(evt) == canvas
 				);
 			};
@@ -157,10 +158,9 @@ export class EditorComponent {
 					}
 				}
 			};
-			const mxGraphViewValidateBackground =
-				mx.mxGraphView.prototype.validateBackground;
-			mx.mxGraphView.prototype.validateBackground = function () {
-				mxGraphViewValidateBackground.apply(this, arguments);
+			const validateBackgroundRef = mxGraphView.validateBackground;
+			mxGraphView.validateBackground = function () {
+				validateBackgroundRef.apply(this, arguments);
 				repaintGrid();
 			};
 		} catch (e) {
@@ -256,7 +256,7 @@ export class EditorComponent {
 	};
 
 	initDraggable = (): void => {
-		const graphF = (evt) => {
+		const getGraphFromEvent = (evt: PointerEvent): mxGraph | null => {
 			const x = mx.mxEvent.getClientX(evt);
 			const y = mx.mxEvent.getClientY(evt);
 			const elt = document.elementFromPoint(x, y);
@@ -268,8 +268,11 @@ export class EditorComponent {
 			return null;
 		};
 
-		const funct = (graph, evt, target, x, y) => {
-			const cell = new mx.mxCell("text", new mx.mxGeometry(0, 0, 150, 100));
+		const createStyledCell = (graph, evt, target, x, y): void => {
+			const cell = new mx.mxCell(
+				"text",
+				new mx.mxGeometry(0, 0, 150, 100)
+			);
 			cell.vertex = true;
 			let style = cell.getStyle();
 			style = mx.mxUtils.setStyle(
@@ -292,7 +295,9 @@ export class EditorComponent {
 		};
 
 		// Creates a DOM node that acts as the drag source
-		const img = mx.mxUtils.createImage("../../assets/dragsource/post-it.png");
+		const img = mx.mxUtils.createImage(
+			"../../assets/dragsource/post-it.png"
+		);
 		img.style.width = "100px";
 		img.style.height = "100px";
 		img.style.cursor = "pointer";
@@ -318,8 +323,8 @@ export class EditorComponent {
 		// drag icon but not for the preview.
 		const ds = mx.mxUtils.makeDraggable(
 			img,
-			graphF,
-			funct,
+			getGraphFromEvent,
+			createStyledCell,
 			dragElt,
 			null,
 			null,
@@ -329,7 +334,7 @@ export class EditorComponent {
 
 		// Redirects feature to global switch. Note that this feature should only be used
 		// if the the x and y arguments are used in funct to insert the cell.
-		ds.isGuidesEnabled = () => {
+		ds.isGuidesEnabled = (): boolean => {
 			return this.graph.graphHandler.guidesEnabled;
 		};
 
@@ -358,7 +363,7 @@ export class EditorComponent {
 	deleteCells(includeEdges): void {
 		// Cancels interactive operations
 		this.graph.escape();
-		var select = this.graph.deleteCells(
+		const select: mxCell[] = this.graph.deleteCells(
 			this.graph.getDeletableCells(this.graph.getSelectionCells()),
 			includeEdges
 		);
@@ -372,7 +377,7 @@ export class EditorComponent {
 		if (!this.graph.isSelectionEmpty()) {
 			this.graph.getModel().beginUpdate();
 			try {
-				var cells = this.graph.getSelectionCells();
+				const cells: mxCell[] = this.graph.getSelectionCells();
 
 				for (var i = 0; i < cells.length; i++) {
 					this.graph.cellLabelChanged(cells[i], "");
@@ -431,25 +436,25 @@ export class EditorComponent {
 			);
 		};
 
-		mx.mxGraph.prototype.isTable = function (cell) {
+		mx.mxGraph.prototype.isTable = function (cell): boolean {
 			var style = this.getCellStyle(cell);
 
 			return style != null && style["childLayout"] == "tableLayout";
 		};
 
 		mx.mxGraph.prototype.deleteCells = function (cells, includeEdges) {
-			var select = null;
+			let select = null;
 
 			if (cells != null && cells.length > 0) {
 				this.model.beginUpdate();
 				try {
 					// Shrinks tables
-					for (var i = 0; i < cells.length; i++) {
-						var parent = this.model.getParent(cells[i]);
+					for (let i = 0; i < cells.length; i++) {
+						const parent = this.model.getParent(cells[i]);
 
 						if (this.isTable(parent)) {
-							var row = this.getCellGeometry(cells[i]);
-							var table = this.getCellGeometry(parent);
+							const row = this.getCellGeometry(cells[i]);
+							let table = this.getCellGeometry(parent);
 
 							if (row != null && table != null) {
 								table = table.clone();
@@ -459,19 +464,19 @@ export class EditorComponent {
 						}
 					}
 
-					var parents = this.selectParentAfterDelete
-						? this.model.getParents(cells)
-						: null;
 					this.removeCells(cells, includeEdges);
 				} finally {
 					this.model.endUpdate();
 				}
+				const parents = this.selectParentAfterDelete
+					? this.model.getParents(cells)
+					: null;
 
 				// Selects parents for easier editing of groups
 				if (parents != null) {
 					select = [];
 
-					for (var i = 0; i < parents.length; i++) {
+					for (let i = 0; i < parents.length; i++) {
 						if (
 							this.model.contains(parents[i]) &&
 							(this.model.isVertex(parents[i]) ||
@@ -482,7 +487,6 @@ export class EditorComponent {
 					}
 				}
 			}
-
 			return select;
 		};
 
@@ -528,7 +532,7 @@ export class EditorComponent {
 			);
 		};
 
-		this.graph.domPurify = function (value, inPlace) {
+		this.graph.domPurify = function (value, inPlace): string {
 			window.DOM_PURIFY_CONFIG.IN_PLACE = inPlace;
 			return DOMPurify.sanitize(value, window.DOM_PURIFY_CONFIG);
 		};
@@ -536,15 +540,16 @@ export class EditorComponent {
 		 * Sanitizes the given HTML markup, allowing target attributes and
 		 * data: protocol links to pages and custom actions.
 		 */
-		this.graph.sanitizeHtml = (value, editing) => {
+		this.graph.sanitizeHtml = (value, editing): string => {
 			return this.graph.domPurify(value, editing);
 		};
 
-		const mxCellEditorGetInitialValue =
-			mx.mxCellEditor.prototype.getInitialValue;
-		mx.mxCellEditor.prototype.getInitialValue = function (state, trigger) {
+		const mxCellEditor = mx.mxCellEditor.prototype;
+
+		const getInitialValueRef = mxCellEditor.getInitialValue;
+		mxCellEditor.getInitialValue = function (state, trigger) {
 			if (mx.mxUtils.getValue(state.style, "html", "0") == "0") {
-				return mxCellEditorGetInitialValue.apply(this, arguments);
+				return getInitialValueRef.apply(this, arguments);
 			} else {
 				var result = this.graph.getEditingValue(state.cell, trigger);
 
